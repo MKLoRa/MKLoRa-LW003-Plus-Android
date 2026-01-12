@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_f2f2f2"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/blue_2f84d0">
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_back"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:onClick="onBack"
+            android:paddingLeft="16dp"
+            android:text=""
+            android:textColor="@color/white_ffffff"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/scan_report_strategies"
+            android:textColor="@color/white_ffffff"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:onClick="onSave"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:src="@drawable/ic_save"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey_f2f2f2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white_ffffff"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:text="Strategies Selection"
+                    android:textColor="@color/black_333333"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_scan_report_strategies"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/tv_scan_report_strategies"
+                    app:layout_constraintTop_toTopOf="@id/tv_scan_report_strategies" />
+
+                <TextView
+                    android:id="@+id/tv_scan_report_strategies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_radius_blue_btn_bg"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:minWidth="70dp"
+                    android:onClick="selectScanReportStrategies"
+                    android:padding="12dp"
+                    android:text="@string/periodic_scan_immediately_report"
+                    android:textColor="@color/white_ffffff"
+                    android:textSize="11sp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_scan_report_strategies">
+
+                    <View style="@style/divider_line" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:drawableRight="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:onClick="onTimingScanImmediatelyReport"
+                        android:text="@string/timing_scan_immediately_report"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <View style="@style/divider_line" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:drawableRight="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:onClick="onPeriodicScanImmediatelyReport"
+                        android:text="@string/periodic_scan_immediately_report"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <View style="@style/divider_line" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:drawableRight="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:onClick="onScanAlwaysPeriodicReport"
+                        android:text="@string/scan_always_periodic_report"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <View style="@style/divider_line" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:drawableRight="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:onClick="onPeriodicScanPeriodicReport"
+                        android:text="@string/periodic_scan_periodic_report"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <View style="@style/divider_line" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:drawableRight="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:onClick="onScanAlwaysTimingReport"
+                        android:text="@string/scan_always_timing_report"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <View style="@style/divider_line" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:drawableRight="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:onClick="onTimingScanTimingReport"
+                        android:text="@string/timing_scan_timing_report"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <View style="@style/divider_line" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:drawableRight="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:onClick="onPeriodicScanTimingReport"
+                        android:text="@string/periodic_scan_timing_report"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

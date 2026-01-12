@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_f2f2f2"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_scan_report_strategies"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@color/white_ffffff"
+            android:clickable="true"
+            android:drawableRight="@drawable/ic_arrow_right"
+            android:gravity="center_vertical"
+            android:onClick="onScanReportStrategies"
+            android:padding="10dp"
+            android:text="@string/scan_report_strategies"
+            android:textColor="@color/black_333333"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_bluetooth_filter"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_ffffff"
+            android:clickable="true"
+            android:drawableRight="@drawable/ic_arrow_right"
+            android:gravity="center_vertical"
+            android:onClick="onBluetoothFilter"
+            android:padding="10dp"
+            android:text="@string/bluetooth_filter_settings"
+            android:textColor="@color/black_333333"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_scan_report_strategies" />
+
+        <TextView
+            android:id="@+id/tv_payload_contents_selection"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_ffffff"
+            android:clickable="true"
+            android:drawableRight="@drawable/ic_arrow_right"
+            android:gravity="center_vertical"
+            android:onClick="onPayloadContentSelection"
+            android:padding="10dp"
+            android:text="@string/payload_contents_selection"
+            android:textColor="@color/black_333333"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_bluetooth_filter" />
+
+
+        <TextView
+            android:id="@+id/tvAlarmPayloadSettings"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_ffffff"
+            android:clickable="true"
+            android:drawableRight="@drawable/ic_arrow_right"
+            android:gravity="center_vertical"
+            android:onClick="onAlarmPayloadSettings"
+            android:padding="10dp"
+            android:text="@string/alarm_payload_settings"
+            android:textColor="@color/black_333333"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_payload_contents_selection" />
+
+        <CheckBox
+            android:id="@+id/cbAdvReportOnly"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_ffffff"
+            android:button="@null"
+            android:drawableRight="@drawable/selector_cb_btn"
+            android:padding="6dp"
+            android:text="Advertising Packet Report Only"
+            android:textColor="@color/black_333333"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAlarmPayloadSettings" />
+
+        <TextView
+            android:id="@+id/tvAdvReportOnlyTips"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white_ffffff"
+            android:padding="6dp"
+            android:text="* If set to OFF, if no response packet is detected, the broadcast packet alone will not be considered to meet the filter conditions.(Only broadcast formats defined by MOKO are valid.)"
+            android:textColor="@color/black_333333"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cbAdvReportOnly" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clDuplicateDataFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_ffffff"
+            android:padding="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAdvReportOnlyTips">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duplicate Data Filter"
+                android:textColor="@color/black_333333"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_duplicate_data_filter"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_duplicate_data_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_radius_blue_btn_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:minWidth="70dp"
+                android:onClick="selectDuplicateDataFilter"
+                android:padding="12dp"
+                android:text="No"
+                android:textColor="@color/white_ffffff"
+                android:textSize="15sp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_report_data_max_length"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_ffffff"
+            android:padding="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clDuplicateDataFilter">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/report_data_max_length"
+                android:textColor="@color/black_333333"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_report_data_max_length"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_report_data_max_length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_radius_blue_btn_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:minWidth="70dp"
+                android:onClick="selectReportDataMaxLength"
+                android:padding="12dp"
+                android:text="Level 1"
+                android:textColor="@color/white_ffffff"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_data_retention_strategy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_ffffff"
+            android:padding="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_report_data_max_length">
+
+
+            <TextView
+                android:id="@+id/data_retention_strategy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/data_retention_strategy"
+                android:textColor="@color/black_333333"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_data_retention_strategy"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_data_retention_strategy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/shape_radius_blue_btn_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:minWidth="70dp"
+                android:onClick="selectDataRetentionStrategy"
+                android:padding="12dp"
+                android:text="Next Cycle Priority"
+                android:textColor="@color/white_ffffff"
+                android:textSize="12sp"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintLeft_toRightOf="@id/data_retention_strategy"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/data_retention_strategy_tips"
+                android:textColor="@color/black_333333"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_data_retention_strategy" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

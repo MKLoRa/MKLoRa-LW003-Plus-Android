@@ -1,0 +1,97 @@
+if (!isLibrary.toBoolean()) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+
+android {
+    namespace "com.moko.lw003plus"
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 28
+        targetSdk 35
+        versionCode 102
+        versionName "1.0.2"
+
+        def formatDate = new Date().format("yyyyMMddHHmm")
+        setProperty("archivesBaseName", "LW003Plus_${versionName}_${formatDate}")
+    }
+
+    buildTypes {
+        release {
+            if (!isLibrary.toBoolean()) {
+                buildConfigField("boolean", "IS_LIBRARY", "false")
+            } else {
+                buildConfigField("boolean", "IS_LIBRARY", "true")
+            }
+            minifyEnabled false
+        }
+        debug {
+            if (!isLibrary.toBoolean()) {
+                buildConfigField("boolean", "IS_LIBRARY", "false")
+            } else {
+                buildConfigField("boolean", "IS_LIBRARY", "true")
+            }
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    viewBinding {
+        enabled = true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main {
+            if (!isLibrary.toBoolean()) {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/module/AndroidManifest.xml'
+            }
+        }
+    }
+
+    if (isLibrary.toBoolean()) {
+        libraryVariants.all { variant ->
+            if (variant.buildType.name == "debug") {
+                // 修改aar名称
+                variant.outputs.all { output ->
+                    def formatDate = new Date().format("yyyyMMddHHmm")
+                    outputFileName = "LW003Plus_${android.defaultConfig.versionName}_${formatDate}.aar"
+                }
+                // 复制aar到指定目录
+                variant.assemble.doLast {
+                    variant.outputs.all { output ->
+                        // 输出目录在：项目目录/build/outputs/aar/
+                        def outputPath = [project.rootDir.absolutePath, "build", "outputs", "aar"].join(File.separator)
+                        copy {
+                            from output.outputFile
+                            into outputPath
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+    if (!isLibrary.toBoolean()) {
+        implementation project(path: ':mokosupport')
+        implementation 'com.github.MOKO-Android-Base-Library:MKLoRaUILib:1.0.10'
+    } else {
+        compileOnly 'com.github.MOKO-Android-Base-Library:MKLoRaUILib:1.0.10'
+        compileOnly 'com.github.MOKO-Android-Base-Library:MKBleLib:1.0.1'
+        implementation files('libs/mokoSupport.jar')
+    }
+}
