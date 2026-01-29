@@ -8,17 +8,17 @@ import android.view.View;
 import com.moko.lw003plus.BuildConfig;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.device.DecoderActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityAboutBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityAboutBinding;
 import com.moko.lw003plus.utils.Utils;
 
 
 public class AboutActivity extends BaseActivity {
-    private Lw003ProActivityAboutBinding mBind;
+    private Lw003PlusActivityAboutBinding mBind;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityAboutBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityAboutBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         if (!BuildConfig.IS_LIBRARY) {
             mBind.appVersion.setText(String.format("APP Version:V%s", Utils.getVersionInfo(this)));

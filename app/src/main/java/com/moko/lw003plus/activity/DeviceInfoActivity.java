@@ -35,7 +35,7 @@ import com.moko.lw003plus.activity.lora.LoRaConnSettingActivity;
 import com.moko.lw003plus.activity.payload.AlarmPayloadSettingActivity;
 import com.moko.lw003plus.activity.payload.PayloadContentSelectionActivity;
 import com.moko.lw003plus.activity.strategies.ScanReportStrategiesActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityDeviceInfoBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityDeviceInfoBinding;
 import com.moko.lw003plus.fragment.DeviceFragment;
 import com.moko.lw003plus.fragment.GeneralFragment;
 import com.moko.lw003plus.fragment.LoRaFragment;
@@ -62,7 +62,7 @@ import androidx.annotation.IdRes;
 
 public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
-    private Lw003ProActivityDeviceInfoBinding mBind;
+    private Lw003PlusActivityDeviceInfoBinding mBind;
     private FragmentManager fragmentManager;
     private LoRaFragment loraFragment;
     private ScannerFragment scannerFragment;
@@ -76,7 +76,7 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityDeviceInfoBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityDeviceInfoBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         mDeviceType = getIntent().getIntExtra(AppConstants.EXTRA_KEY_DEVICE_TYPE, 0);
         fragmentManager = getFragmentManager();
@@ -210,17 +210,12 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                     case KEY_LOW_POWER_PAYLOAD_ENABLE:
                                     case KEY_LOW_POWER_REPORT_INTERVAL:
                                     case KEY_LOW_POWER_PERCENT:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_REPORT_DATA_MAX_LENGTH:
                                     case KEY_ADV_REPORT_ONLY_ENABLE:
                                     case KEY_CONTINUITY_TRANSFER_ENABLE:
-                                    case KEY_CHARGE_PRIORITY:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(DeviceInfoActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -314,12 +309,6 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
                                         if (length > 0) {
                                             int lowPower = value[5] & 0xFF;
                                             deviceFragment.setLowPower(lowPower);
-                                        }
-                                        break;
-                                    case KEY_CHARGE_PRIORITY:
-                                        if (length > 0) {
-                                            int priority = value[5] & 0xFF;
-                                            deviceFragment.setPriority(priority);
                                         }
                                         break;
                                 }
@@ -511,7 +500,6 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
         orderTasks.add(OrderTaskAssembler.getLowPowerPayloadEnable());
         orderTasks.add(OrderTaskAssembler.getLowPowerInterval());
         orderTasks.add(OrderTaskAssembler.getLowPowerPercent());
-        orderTasks.add(OrderTaskAssembler.getChargePriority());
         LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 
@@ -666,11 +654,6 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     public void selectTimeZone(View view) {
         if (isWindowLocked()) return;
         deviceFragment.showTimeZoneDialog();
-    }
-
-    public void selectChargePriority(View view) {
-        if (isWindowLocked()) return;
-        deviceFragment.showChargePriorityDialog();
     }
 
 

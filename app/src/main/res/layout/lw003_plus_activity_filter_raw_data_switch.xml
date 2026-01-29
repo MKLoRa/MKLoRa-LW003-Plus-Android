@@ -220,6 +220,7 @@
             </RelativeLayout>
 
             <View style="@style/divider_line" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -309,6 +310,7 @@
             </RelativeLayout>
 
             <View style="@style/divider_line" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -344,6 +346,7 @@
             </RelativeLayout>
 
             <View style="@style/divider_line" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -435,6 +438,42 @@
 
                 <TextView
                     android:id="@+id/tv_filter_by_tof"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:drawableRight="@drawable/ic_arrow_right"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:text="ON"
+                    android:textColor="@color/black_333333"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <View style="@style/divider_line" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:onClick="onFilterByNano">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:text="NanoBeacon Info"
+                    android:textColor="@color/black_333333"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_filter_by_nano"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"

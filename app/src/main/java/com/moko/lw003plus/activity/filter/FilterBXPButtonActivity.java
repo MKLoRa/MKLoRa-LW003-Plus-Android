@@ -11,7 +11,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterBxpButtonBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterBxpButtonBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -28,13 +28,13 @@ import java.util.List;
 
 public class FilterBXPButtonActivity extends BaseActivity {
 
-    private Lw003ProActivityFilterBxpButtonBinding mBind;
+    private Lw003PlusActivityFilterBxpButtonBinding mBind;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterBxpButtonBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterBxpButtonBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         showSyncingProgressDialog();
@@ -91,14 +91,10 @@ public class FilterBXPButtonActivity extends BaseActivity {
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
                                     case KEY_FILTER_BXP_BUTTON_RULES:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_FILTER_BXP_BUTTON_ENABLE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(FilterBXPButtonActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

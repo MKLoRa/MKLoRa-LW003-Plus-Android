@@ -1,13 +1,7 @@
-package com.moko.lw003plus.activity.strategies;
+package com.moko.lw003plus.activity.payload;
 
 
-import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.moko.ble.lib.MokoConstants;
@@ -17,7 +11,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003PlusActivityScanAlwaysPeriodicReportBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityPayloadNanoContentBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -32,27 +26,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
+public class PayloadNanoContentActivity extends BaseActivity {
 
-    private Lw003PlusActivityScanAlwaysPeriodicReportBinding mBind;
-    private boolean mReceiverTag = false;
+    private Lw003PlusActivityPayloadNanoContentBinding mBind;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003PlusActivityScanAlwaysPeriodicReportBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityPayloadNanoContentBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
-        // 注册广播接收器
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mReceiver, filter);
-        mReceiverTag = true;
+
         showSyncingProgressDialog();
-        mBind.etReportInterval.postDelayed(() -> {
+        mBind.cbMac.postDelayed(() -> {
             List<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.getScanAlwaysPeriodicReportParams());
+            orderTasks.add(OrderTaskAssembler.getPayloadNanoContent());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
@@ -101,10 +90,10 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
                                 // write
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
-                                    case KEY_SCAN_ALWAYS_PERIODIC_REPORT_PARAMS:
+                                    case KEY_PAYLOAD_NANO_CONTENT:
                                         savedParamsError |= result != 1;
                                         if (savedParamsError) {
-                                            ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
+                                            ToastUtils.showToast(PayloadNanoContentActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
                                             ToastUtils.showToast(this, "Save Successfully！");
                                         }
@@ -114,13 +103,21 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
                             if (flag == 0x00) {
                                 // read
                                 switch (configKeyEnum) {
-                                    case KEY_SCAN_ALWAYS_PERIODIC_REPORT_PARAMS:
+                                    case KEY_PAYLOAD_NANO_CONTENT:
                                         if (length > 0) {
-                                            int interval = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
-                                            mBind.etReportInterval.setText(String.valueOf(interval));
+                                            int data = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
+                                            mBind.cbMac.setChecked((data & 0x01) == 0x01);
+                                            mBind.cbRssi.setChecked((data & 0x02) == 0x02);
+                                            mBind.cbTimestamp.setChecked((data & 0x04) == 0x04);
+                                            mBind.cbMfgId.setChecked((data & 0x08) == 0x08);
+                                            mBind.cbAdvType.setChecked((data & 0x10) == 0x10);
+                                            mBind.cbBatteryVoltage.setChecked((data & 0x20) == 0x20);
+                                            mBind.cbBeaconTemperature.setChecked((data & 0x40) == 0x40);
+                                            mBind.cbSecCnt.setChecked((data & 0x80) == 0x80);
+                                            mBind.cbTriggerStatus.setChecked((data & 0x0100) == 0x0100);
+                                            mBind.cbRawDataAdv.setChecked((data & 0x0200) == 0x0200);
                                         }
                                         break;
-
                                 }
                             }
                         }
@@ -130,35 +127,35 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
         });
     }
 
+    public void onSave(View view) {
+        if (isWindowLocked())
+            return;
+        showSyncingProgressDialog();
+        saveParams();
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
+    private void saveParams() {
+        savedParamsError = false;
+        List<OrderTask> orderTasks = new ArrayList<>();
+        int flag = (mBind.cbMac.isChecked() ? 0x01 : 0x00)
+                | (mBind.cbRssi.isChecked() ? 0x02 : 0x00)
+                | (mBind.cbTimestamp.isChecked() ? 0x04 : 0x00)
+                | (mBind.cbMfgId.isChecked() ? 0x08 : 0x00)
+                | (mBind.cbAdvType.isChecked() ? 0x10 : 0x00)
+                | (mBind.cbBatteryVoltage.isChecked() ? 0x20 : 0x00)
+                | (mBind.cbBeaconTemperature.isChecked() ? 0x40 : 0x00)
+                | (mBind.cbSecCnt.isChecked() ? 0x80 : 0x00)
+                | (mBind.cbTriggerStatus.isChecked() ? 0x0100 : 0x00)
+                | (mBind.cbRawDataAdv.isChecked() ? 0x0200 : 0x00);
+        orderTasks.add(OrderTaskAssembler.setPayloadNanoContent(flag));
+        LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+    }
 
-            if (intent != null) {
-                String action = intent.getAction();
-                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
-                    int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-                    switch (blueState) {
-                        case BluetoothAdapter.STATE_TURNING_OFF:
-                            dismissSyncProgressDialog();
-                            finish();
-                            break;
-                    }
-                }
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mReceiverTag) {
-            mReceiverTag = false;
-            // 注销广播
-            unregisterReceiver(mReceiver);
-        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -175,23 +172,5 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
     private void backHome() {
         setResult(RESULT_OK);
         finish();
-    }
-
-    public void onSave(View view) {
-        savedParamsError = false;
-        final String intervalStr = mBind.etReportInterval.getText().toString();
-        if (TextUtils.isEmpty(intervalStr)) {
-            ToastUtils.showToast(this, "Para error!");
-            return;
-        }
-        final int interval = Integer.parseInt(intervalStr);
-        if (interval < 3 || interval > 65535) {
-            ToastUtils.showToast(this, "Para error!");
-            return;
-        }
-        showSyncingProgressDialog();
-        List<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setScanAlwaysPeriodicReportParams(interval));
-        LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 }

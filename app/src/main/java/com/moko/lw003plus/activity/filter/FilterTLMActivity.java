@@ -12,7 +12,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterTlmBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterTlmBinding;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class FilterTLMActivity extends BaseActivity {
 
-    private Lw003ProActivityFilterTlmBinding mBind;
+    private Lw003PlusActivityFilterTlmBinding mBind;
 
     private boolean savedParamsError;
 
@@ -41,7 +41,7 @@ public class FilterTLMActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterTlmBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterTlmBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         mValues = new ArrayList<>();
@@ -103,9 +103,7 @@ public class FilterTLMActivity extends BaseActivity {
                                 switch (configKeyEnum) {
                                     case KEY_FILTER_EDDYSTONE_TLM_VERSION:
                                     case KEY_FILTER_EDDYSTONE_TLM_ENABLE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(FilterTLMActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

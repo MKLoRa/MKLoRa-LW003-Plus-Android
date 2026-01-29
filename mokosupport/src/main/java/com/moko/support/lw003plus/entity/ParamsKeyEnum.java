@@ -31,6 +31,8 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_HEARTBEAT_INTERVAL(0x0022),
     // 指示灯开关
     KEY_INDICATOR_STATUS(0x0023),
+    // 磁铁开关机方式选择
+    KEY_OFF_BY_MAGNETIC(0x0024),
     // 按键开关关机功能
     KEY_OFF_BY_BUTTON(0x0025),
     // 关机信息上报
@@ -73,8 +75,6 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_LOW_POWER_MIN_SAMPLE_INTERVAL(0x010B),
     // 低电检测采样次数
     KEY_LOW_POWER_SAMPLE_TIMES(0x010C),
-    // 充电优先级
-    KEY_CHARGE_PRIORITY(0x010D),
 
     //// 蓝牙相关参数
     // 登录是否需要密码
@@ -178,6 +178,14 @@ public enum ParamsKeyEnum implements Serializable {
     //MK-PIR 设备
     //Minor 过滤范围
     KEY_FILTER_MK_PIR_MINOR(0x0486),
+    // NanoBeaconInfo设备过滤开关
+    KEY_FILTER_NANO_ENABLE(0x0490),
+    // NanoBeaconInfo类型
+    // 过滤ADV TYPE
+    KEY_FILTER_NANO_ADV_TYPE(0x0491),
+    // NanoBeaconInfo类型
+    // 过滤Trigger Status
+    KEY_FILTER_NANO_TRIGGER_STATUS(0x0492),
     // Unknown设备过滤开关
     KEY_FILTER_OTHER_ENABLE(0x04F8),
     // 3组unknown过滤规则逻辑
@@ -231,10 +239,15 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_LOW_POWER_PAYLOAD(0x0552),
     //事件信息包上行配置
     KEY_EVENT_PAYLOAD(0x0554),
-    //网关数据包上行配置
+    //定位数据包上行配置
+    KEY_POS_PAYLOAD(0x0555),
+    //极限定位数据包上行配置
+    KEY_GPS_PAYLOAD(0x0556),
+    //扫描数据包上行配置
     KEY_BEACON_PAYLOAD(0x055C),
     //报警信息包上行配置
     KEY_ALARM_PAYLOAD(0x055E),
+
 
     ////其他应用功能
     //温度监测开关
@@ -312,6 +325,8 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_PAYLOAD_BXP_IBEACON_CONTENT(0x075B),
     // BXP-Button上报内容
     KEY_PAYLOAD_BXP_BUTTON_CONTENT(0x075C),
+    // NanoBeacon上报内容
+    KEY_PAYLOAD_NANO_CONTENT(0x075D),
     // Unknown上报内容
     KEY_PAYLOAD_OTHER_CONTENT(0x0770),
     // Unknown上报数据款

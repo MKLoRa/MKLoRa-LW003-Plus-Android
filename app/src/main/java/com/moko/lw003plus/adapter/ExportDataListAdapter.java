@@ -7,7 +7,7 @@ import com.moko.support.lw003plus.entity.ExportData;
 
 public class ExportDataListAdapter extends BaseQuickAdapter<ExportData, BaseViewHolder> {
     public ExportDataListAdapter() {
-        super(R.layout.lw003_pro_item_export_data);
+        super(R.layout.lw003_plus_item_export_data);
     }
 
     @Override

@@ -3,7 +3,7 @@
     <application
         android:name="com.moko.lw003plus.BaseApplication"
         android:allowBackup="true"
-        android:icon="@drawable/lw003_pro_ic_launcher"
+        android:icon="@drawable/lw003_plus_ic_launcher"
         android:label="@string/app_name">
         <activity
             android:name="com.moko.lw003plus.activity.GuideActivity"
@@ -105,6 +105,10 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.moko.lw003plus.activity.filter.FilterBXPButtonActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.lw003plus.activity.filter.FilterNanoActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -214,6 +218,11 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.moko.lw003plus.activity.payload.PayloadMKPIRContentActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name="com.moko.lw003plus.activity.payload.PayloadNanoContentActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity

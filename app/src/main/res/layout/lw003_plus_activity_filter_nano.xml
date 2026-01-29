@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_ebebeb"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -30,12 +29,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/indicator_settings"
+            android:text="NanoBeacon Info Filter"
             android:textColor="@color/white_ffffff"
             android:textSize="17sp"
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/iv_save"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -44,31 +44,34 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:src="@drawable/ic_save" />
-
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/grey_f2f2f2"
         android:orientation="vertical">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@color/white_ffffff"
-            android:padding="10dp">
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:paddingBottom="10dp">
 
             <CheckBox
-                android:id="@+id/cb_low_power"
+                android:id="@+id/cbNanoEnable"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:button="@null"
                 android:checked="false"
                 android:drawableRight="@drawable/selector_cb_btn"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                android:text="Low-power"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="NanoBeacon Info"
                 android:textColor="@color/black_333333"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -79,28 +82,39 @@
             <View
                 style="@style/divider_line"
                 android:layout_width="0dp"
-                android:layout_marginTop="10dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cb_low_power" />
+                app:layout_constraintTop_toBottomOf="@id/cbNanoEnable" />
 
-            <CheckBox
-                android:id="@+id/cb_charging"
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:button="@null"
-                android:checked="false"
-                android:drawableRight="@drawable/selector_cb_btn"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                android:text="Charging / Fully charged"
+                android:layout_marginLeft="12dp"
+                android:text="ADV Type"
                 android:textColor="@color/black_333333"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/tv_nano_type"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_nano_type" />
+
+            <TextView
+                android:id="@+id/tv_nano_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="12dp"
+                android:background="@drawable/shape_radius_blue_btn_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:minWidth="150dp"
+                android:onClick="onNanoType"
+                android:padding="10dp"
+                android:text="All"
+                android:textColor="@color/white_ffffff"
+                android:textSize="15sp"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cb_low_power" />
+                app:layout_constraintTop_toBottomOf="@id/cbNanoEnable" />
 
             <View
                 style="@style/divider_line"
@@ -108,25 +122,38 @@
                 android:layout_marginTop="10dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cb_charging" />
+                app:layout_constraintTop_toBottomOf="@id/tv_nano_type" />
 
-            <CheckBox
-                android:id="@+id/cb_bluetooth_broadcast"
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:button="@null"
-                android:checked="false"
-                android:drawableRight="@drawable/selector_cb_btn"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                android:text="Bluetooth Broadcast"
+                android:layout_marginLeft="12dp"
+                android:text="Trigger Status"
                 android:textColor="@color/black_333333"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/tvTriggerStatus"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvTriggerStatus" />
+
+            <TextView
+                android:id="@+id/tvTriggerStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="12dp"
+                android:background="@drawable/shape_radius_blue_btn_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:maxWidth="200dp"
+                android:minWidth="150dp"
+                android:onClick="onTriggerStatus"
+                android:padding="10dp"
+                android:text="All"
+                android:textColor="@color/white_ffffff"
+                android:textSize="15sp"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cb_charging" />
+                app:layout_constraintTop_toBottomOf="@id/tv_nano_type" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </LinearLayout>

@@ -11,8 +11,9 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lib.loraui.dialog.AlertMessageDialog;
+import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityOnOffSettingsBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityOnOffSettingsBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -29,16 +30,19 @@ import java.util.List;
 
 public class OnOffSettingsActivity extends BaseActivity {
 
-    private Lw003ProActivityOnOffSettingsBinding mBind;
+    private Lw003PlusActivityOnOffSettingsBinding mBind;
+    private ArrayList<String> mValues;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityOnOffSettingsBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityOnOffSettingsBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
 
-
+        mValues = new ArrayList<>();
+        mValues.add("Continuous approach");
+        mValues.add("Multiple approaches");
         mBind.ivPowerOff.setOnClickListener(v -> {
             if (isWindowLocked()) return;
             AlertMessageDialog dialog = new AlertMessageDialog();
@@ -56,6 +60,7 @@ public class OnOffSettingsActivity extends BaseActivity {
         showSyncingProgressDialog();
         mBind.cbOffByButton.postDelayed(() -> {
             List<OrderTask> orderTasks = new ArrayList<>();
+            orderTasks.add(OrderTaskAssembler.getOffByMagnetic());
             orderTasks.add(OrderTaskAssembler.getOffByButton());
             orderTasks.add(OrderTaskAssembler.getShutdownPayloadEnable());
             orderTasks.add(OrderTaskAssembler.getAutoPowerOn());
@@ -107,16 +112,13 @@ public class OnOffSettingsActivity extends BaseActivity {
                                 // write
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
+                                    case KEY_OFF_BY_MAGNETIC:
                                     case KEY_OFF_BY_BUTTON:
                                     case KEY_SHUTDOWN_PAYLOAD_ENABLE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_AUTO_POWER_ON_ENABLE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(OnOffSettingsActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -128,6 +130,13 @@ public class OnOffSettingsActivity extends BaseActivity {
                             if (flag == 0x00) {
                                 // read
                                 switch (configKeyEnum) {
+                                    case KEY_OFF_BY_MAGNETIC:
+                                        if (length == 1) {
+                                            int selected = value[5] & 0xFF;
+                                            mBind.tvPowerOnMethod.setTag(selected);
+                                            mBind.tvPowerOnMethod.setText(mValues.get(selected));
+                                        }
+                                        break;
                                     case KEY_OFF_BY_BUTTON:
                                         if (length > 0) {
                                             int enable = value[5] & 0xFF;
@@ -155,6 +164,18 @@ public class OnOffSettingsActivity extends BaseActivity {
         });
     }
 
+    public void onPowerOnMethod(View v) {
+        if (isWindowLocked()) return;
+        int selected = (int) mBind.tvPowerOnMethod.getTag();
+        BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(mValues, selected);
+        dialog.setListener(value -> {
+            mBind.tvPowerOnMethod.setTag(value);
+            mBind.tvPowerOnMethod.setText(mValues.get(value));
+        });
+        dialog.show(getSupportFragmentManager());
+    }
+
     public void onSave(View view) {
         if (isWindowLocked())
             return;
@@ -166,6 +187,9 @@ public class OnOffSettingsActivity extends BaseActivity {
     private void saveParams() {
         savedParamsError = false;
         List<OrderTask> orderTasks = new ArrayList<>();
+        int selected = (int) mBind.tvPowerOnMethod.getTag();
+        orderTasks.add(OrderTaskAssembler.setOffByMagnetic(selected));
+        orderTasks.add(OrderTaskAssembler.getOffByMagnetic());
         orderTasks.add(OrderTaskAssembler.setOffByButton(mBind.cbOffByButton.isChecked() ? 1 : 0));
         orderTasks.add(OrderTaskAssembler.setShutdownEnable(mBind.cbShutDownPayload.isChecked() ? 1 : 0));
         orderTasks.add(OrderTaskAssembler.setAutoPowerOnEnable(mBind.cbOffByButton.isChecked() ? 1 : 0));

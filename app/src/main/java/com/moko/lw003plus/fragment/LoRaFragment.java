@@ -8,14 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.moko.lw003plus.activity.DeviceInfoActivity;
-import com.moko.lw003plus.databinding.Lw003ProFragmentLoraBinding;
+import com.moko.lw003plus.databinding.Lw003PlusFragmentLoraBinding;
 
 import java.util.ArrayList;
 
 public class LoRaFragment extends Fragment {
     private static final String TAG = LoRaFragment.class.getSimpleName();
 
-    private Lw003ProFragmentLoraBinding mBind;
+    private Lw003PlusFragmentLoraBinding mBind;
 
     private DeviceInfoActivity activity;
 
@@ -40,7 +40,7 @@ public class LoRaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
-        mBind = Lw003ProFragmentLoraBinding.inflate(inflater, container, false);
+        mBind = Lw003PlusFragmentLoraBinding.inflate(inflater, container, false);
         activity = (DeviceInfoActivity) getActivity();
         mUploadMode = new ArrayList<>();
         mUploadMode.add("ABP");

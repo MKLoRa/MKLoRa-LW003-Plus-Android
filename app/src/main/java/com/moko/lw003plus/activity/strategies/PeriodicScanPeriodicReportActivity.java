@@ -17,7 +17,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityPeriodicScanPeriodicReportBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityPeriodicScanPeriodicReportBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -34,14 +34,14 @@ import java.util.List;
 
 public class PeriodicScanPeriodicReportActivity extends BaseActivity {
 
-    private Lw003ProActivityPeriodicScanPeriodicReportBinding mBind;
+    private Lw003PlusActivityPeriodicScanPeriodicReportBinding mBind;
     private boolean mReceiverTag = false;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityPeriodicScanPeriodicReportBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityPeriodicScanPeriodicReportBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         // 注册广播接收器
@@ -102,9 +102,7 @@ public class PeriodicScanPeriodicReportActivity extends BaseActivity {
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
                                     case KEY_PERIODIC_SCAN_PERIODIC_REPORT_PARAMS:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

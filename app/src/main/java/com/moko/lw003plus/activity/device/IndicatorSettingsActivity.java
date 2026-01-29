@@ -16,7 +16,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityIndicatorSettingsBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityIndicatorSettingsBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -33,14 +33,14 @@ import java.util.List;
 
 public class IndicatorSettingsActivity extends BaseActivity {
 
-    private Lw003ProActivityIndicatorSettingsBinding mBind;
+    private Lw003PlusActivityIndicatorSettingsBinding mBind;
     private boolean mReceiverTag = false;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityIndicatorSettingsBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityIndicatorSettingsBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         // 注册广播接收器
@@ -100,9 +100,7 @@ public class IndicatorSettingsActivity extends BaseActivity {
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
                                     case KEY_INDICATOR_STATUS:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(IndicatorSettingsActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -119,7 +117,11 @@ public class IndicatorSettingsActivity extends BaseActivity {
                                             byte[] indicatorBytes = Arrays.copyOfRange(value, 5, 5 + length);
                                             mBind.cbLowPower.setChecked(indicatorBytes[0] == 1);
                                             mBind.cbCharging.setChecked(indicatorBytes[1] == 1);
-                                            mBind.cbBluetoothBroadcast.setChecked(indicatorBytes[2] == 1);
+                                            mBind.cbFullCharged.setChecked(indicatorBytes[2] == 1);
+                                            mBind.cbBluetoothBroadcast.setChecked(indicatorBytes[3] == 1);
+                                            mBind.cbFix.setChecked(indicatorBytes[4] == 1);
+                                            mBind.cbFixSuccess.setChecked(indicatorBytes[5] == 1);
+                                            mBind.cbFixFail.setChecked(indicatorBytes[6] == 1);
                                         }
                                         break;
                                 }
@@ -186,6 +188,10 @@ public class IndicatorSettingsActivity extends BaseActivity {
         LoRaLW003PlusMokoSupport.getInstance().sendOrder(OrderTaskAssembler.setIndicatorStatus(
                 mBind.cbLowPower.isChecked() ? 1 : 0,
                 mBind.cbCharging.isChecked() ? 1 : 0,
-                mBind.cbBluetoothBroadcast.isChecked() ? 1 : 0));
+                mBind.cbFullCharged.isChecked() ? 1 : 0,
+                mBind.cbBluetoothBroadcast.isChecked() ? 1 : 0,
+                mBind.cbFix.isChecked() ? 1 : 0,
+                mBind.cbFixSuccess.isChecked() ? 1 : 0,
+                mBind.cbFixFail.isChecked() ? 1 : 0));
     }
 }

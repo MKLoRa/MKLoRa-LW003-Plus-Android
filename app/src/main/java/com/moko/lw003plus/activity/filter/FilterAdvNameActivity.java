@@ -18,7 +18,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterAdvNameBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterAdvNameBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -37,7 +37,7 @@ public class FilterAdvNameActivity extends BaseActivity {
 
     private final String FILTER_ASCII = "[ -~]*";
 
-    private Lw003ProActivityFilterAdvNameBinding mBind;
+    private Lw003PlusActivityFilterAdvNameBinding mBind;
     private boolean savedParamsError;
 
     private ArrayList<String> filterAdvName;
@@ -46,7 +46,7 @@ public class FilterAdvNameActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterAdvNameBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterAdvNameBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         filterAdvName = new ArrayList<>();
@@ -113,14 +113,10 @@ public class FilterAdvNameActivity extends BaseActivity {
                                 switch (configKeyEnum) {
                                     case KEY_FILTER_NAME_PRECISE:
                                     case KEY_FILTER_NAME_REVERSE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_FILTER_NAME_RULES:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(FilterAdvNameActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -156,7 +152,7 @@ public class FilterAdvNameActivity extends BaseActivity {
                                             }
                                             for (int i = 0, l = filterAdvName.size(); i < l; i++) {
                                                 String advName = filterAdvName.get(i);
-                                                View v = LayoutInflater.from(FilterAdvNameActivity.this).inflate(R.layout.lw003_pro_item_adv_name_filter, mBind.llDavName, false);
+                                                View v = LayoutInflater.from(FilterAdvNameActivity.this).inflate(R.layout.lw003_plus_item_adv_name_filter, mBind.llDavName, false);
                                                 TextView title = v.findViewById(R.id.tv_adv_name_title);
                                                 EditText etAdvName = v.findViewById(R.id.et_adv_name);
                                                 etAdvName.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20), filter});
@@ -194,7 +190,7 @@ public class FilterAdvNameActivity extends BaseActivity {
             ToastUtils.showToast(this, "You can set up to 10 filters!");
             return;
         }
-        View v = LayoutInflater.from(this).inflate(R.layout.lw003_pro_item_adv_name_filter, mBind.llDavName, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.lw003_plus_item_adv_name_filter, mBind.llDavName, false);
         TextView title = v.findViewById(R.id.tv_adv_name_title);
         title.setText(String.format("ADV Name%d", count + 1));
         EditText etAdvName = v.findViewById(R.id.et_adv_name);

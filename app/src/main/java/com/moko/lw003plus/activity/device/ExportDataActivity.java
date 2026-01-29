@@ -24,7 +24,7 @@ import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
 import com.moko.lw003plus.activity.LoRaLW003PlusMainActivity;
 import com.moko.lw003plus.adapter.ExportDataListAdapter;
-import com.moko.lw003plus.databinding.Lw003ProActivityExportDataBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityExportDataBinding;
 import com.moko.lib.loraui.dialog.AlertMessageDialog;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.lw003plus.utils.Utils;
@@ -55,7 +55,7 @@ public class ExportDataActivity extends BaseActivity {
     private static final String TRACKED_FILE = "tracked.txt";
 
     private static String PATH_LOGCAT;
-    private Lw003ProActivityExportDataBinding mBind;
+    private Lw003PlusActivityExportDataBinding mBind;
     private boolean mReceiverTag = false;
     private StringBuilder storeString;
     private ArrayList<ExportData> exportDatas;
@@ -70,7 +70,7 @@ public class ExportDataActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityExportDataBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityExportDataBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         exportDatas = LoRaLW003PlusMokoSupport.getInstance().exportDatas;
         storeString = LoRaLW003PlusMokoSupport.getInstance().storeString;

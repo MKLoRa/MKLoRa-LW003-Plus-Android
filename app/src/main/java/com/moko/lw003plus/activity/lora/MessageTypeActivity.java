@@ -11,7 +11,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityMessageTypeSettingsBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityMessageTypeSettingsBinding;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class MessageTypeActivity extends BaseActivity {
 
-    private Lw003ProActivityMessageTypeSettingsBinding mBind;
+    private Lw003PlusActivityMessageTypeSettingsBinding mBind;
     private boolean savedParamsError;
     private ArrayList<String> mMessagePayloadList;
     private ArrayList<String> mMaxRetransmissionTimesList;
@@ -37,7 +37,7 @@ public class MessageTypeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityMessageTypeSettingsBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityMessageTypeSettingsBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         mMessagePayloadList = new ArrayList<>();
@@ -55,6 +55,8 @@ public class MessageTypeActivity extends BaseActivity {
             orderTasks.add(OrderTaskAssembler.getBeaconPayloadSettings());
             orderTasks.add(OrderTaskAssembler.getHeartbeatPayloadSettings());
             orderTasks.add(OrderTaskAssembler.getLowPowerPayloadSettings());
+            orderTasks.add(OrderTaskAssembler.getPosPayloadSettings());
+            orderTasks.add(OrderTaskAssembler.getGPSPayloadSettings());
             orderTasks.add(OrderTaskAssembler.getAlarmPayloadSettings());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
@@ -109,14 +111,12 @@ public class MessageTypeActivity extends BaseActivity {
                                     case KEY_DEVICE_INFO_PAYLOAD:
                                     case KEY_ALARM_PAYLOAD:
                                     case KEY_LOW_POWER_PAYLOAD:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                    case KEY_POS_PAYLOAD:
+                                    case KEY_GPS_PAYLOAD:
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_HEARTBEAT_PAYLOAD:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(MessageTypeActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -194,6 +194,28 @@ public class MessageTypeActivity extends BaseActivity {
                                             mBind.clLowPowerPayloadTimes.setVisibility(type == 0 ? View.GONE : View.VISIBLE);
                                         }
                                         break;
+                                    case KEY_POS_PAYLOAD:
+                                        if (length > 0) {
+                                            int type = value[5];
+                                            int times = value[6] - 1;
+                                            mBind.tvPosPayloadType.setTag(type);
+                                            mBind.tvPosPayloadType.setText(mMessagePayloadList.get(type));
+                                            mBind.tvPosPayloadTimes.setTag(times);
+                                            mBind.tvPosPayloadTimes.setText(mMaxRetransmissionTimesList.get(times));
+                                            mBind.clPosPayloadTimes.setVisibility(type == 0 ? View.GONE : View.VISIBLE);
+                                        }
+                                        break;
+                                    case KEY_GPS_PAYLOAD:
+                                        if (length > 0) {
+                                            int type = value[5];
+                                            int times = value[6] - 1;
+                                            mBind.tvGpsPayloadType.setTag(type);
+                                            mBind.tvGpsPayloadType.setText(mMessagePayloadList.get(type));
+                                            mBind.tvGpsPayloadTimes.setTag(times);
+                                            mBind.tvGpsPayloadTimes.setText(mMaxRetransmissionTimesList.get(times));
+                                            mBind.clGpsPayloadTimes.setVisibility(type == 0 ? View.GONE : View.VISIBLE);
+                                        }
+                                        break;
 
                                 }
                             }
@@ -227,11 +249,17 @@ public class MessageTypeActivity extends BaseActivity {
         int heartbeatTimes = (int) mBind.tvHeartbeatPayloadTimes.getTag();
         int lowPowerType = (int) mBind.tvLowPowerPayloadType.getTag();
         int lowPowerTimes = (int) mBind.tvLowPowerPayloadTimes.getTag();
+        int posType = (int) mBind.tvPosPayloadType.getTag();
+        int posTimes = (int) mBind.tvPosPayloadTimes.getTag();
+        int gpsType = (int) mBind.tvGpsPayloadType.getTag();
+        int gpsTimes = (int) mBind.tvGpsPayloadTimes.getTag();
         orderTasks.add(OrderTaskAssembler.setBeaconPayloadSettings(beaconType, beaconTimes + 1));
         orderTasks.add(OrderTaskAssembler.setEventPayloadSettings(eventType, eventTimes + 1));
         orderTasks.add(OrderTaskAssembler.setDeviceInfoPayloadSettings(deviceInfoType, deviceInfoTimes + 1));
         orderTasks.add(OrderTaskAssembler.setAlarmPayloadSettings(alarmType, alarmTimes + 1));
         orderTasks.add(OrderTaskAssembler.setLowPowerPayloadSettings(lowPowerType, lowPowerTimes + 1));
+        orderTasks.add(OrderTaskAssembler.setPosPayloadSettings(posType, posTimes + 1));
+        orderTasks.add(OrderTaskAssembler.setGpsPayloadSettings(gpsType, gpsTimes + 1));
         orderTasks.add(OrderTaskAssembler.setHeartbeatPayloadSettings(heartbeatType, heartbeatTimes + 1));
         LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
@@ -410,6 +438,58 @@ public class MessageTypeActivity extends BaseActivity {
         bottomDialog.setListener(value -> {
             mBind.tvLowPowerPayloadTimes.setTag(value);
             mBind.tvLowPowerPayloadTimes.setText(mMaxRetransmissionTimesList.get(value));
+        });
+        bottomDialog.show(getSupportFragmentManager());
+    }
+
+    public void selectPosPayloadType(View view) {
+        if (isWindowLocked()) return;
+        int selected = (int) view.getTag();
+        BottomDialog bottomDialog = new BottomDialog();
+        bottomDialog.setDatas(mMessagePayloadList, selected);
+        bottomDialog.setListener(value -> {
+            mBind.tvPosPayloadType.setTag(value);
+            mBind.tvPosPayloadType.setText(mMessagePayloadList.get(value));
+            mBind.clPosPayloadTimes.setVisibility(value == 0 ? View.GONE : View.VISIBLE);
+        });
+        bottomDialog.show(getSupportFragmentManager());
+
+    }
+
+    public void selectPosPayloadTimes(View view) {
+        if (isWindowLocked()) return;
+        int selected = (int) view.getTag();
+        BottomDialog bottomDialog = new BottomDialog();
+        bottomDialog.setDatas(mMaxRetransmissionTimesList, selected);
+        bottomDialog.setListener(value -> {
+            mBind.tvPosPayloadTimes.setTag(value);
+            mBind.tvPosPayloadTimes.setText(mMaxRetransmissionTimesList.get(value));
+        });
+        bottomDialog.show(getSupportFragmentManager());
+    }
+
+    public void selectGPSPayloadType(View view) {
+        if (isWindowLocked()) return;
+        int selected = (int) view.getTag();
+        BottomDialog bottomDialog = new BottomDialog();
+        bottomDialog.setDatas(mMessagePayloadList, selected);
+        bottomDialog.setListener(value -> {
+            mBind.tvGpsPayloadType.setTag(value);
+            mBind.tvGpsPayloadType.setText(mMessagePayloadList.get(value));
+            mBind.clGpsPayloadTimes.setVisibility(value == 0 ? View.GONE : View.VISIBLE);
+        });
+        bottomDialog.show(getSupportFragmentManager());
+
+    }
+
+    public void selectGPSPayloadTimes(View view) {
+        if (isWindowLocked()) return;
+        int selected = (int) view.getTag();
+        BottomDialog bottomDialog = new BottomDialog();
+        bottomDialog.setDatas(mMaxRetransmissionTimesList, selected);
+        bottomDialog.setListener(value -> {
+            mBind.tvGpsPayloadTimes.setTag(value);
+            mBind.tvGpsPayloadTimes.setText(mMaxRetransmissionTimesList.get(value));
         });
         bottomDialog.show(getSupportFragmentManager());
     }

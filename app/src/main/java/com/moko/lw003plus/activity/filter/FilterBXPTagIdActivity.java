@@ -16,7 +16,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterBxpTagIdBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterBxpTagIdBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class FilterBXPTagIdActivity extends BaseActivity {
 
-    private Lw003ProActivityFilterBxpTagIdBinding mBind;
+    private Lw003PlusActivityFilterBxpTagIdBinding mBind;
 
     private boolean savedParamsError;
 
@@ -42,7 +42,7 @@ public class FilterBXPTagIdActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterBxpTagIdBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterBxpTagIdBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         filterTagId = new ArrayList<>();
@@ -103,14 +103,10 @@ public class FilterBXPTagIdActivity extends BaseActivity {
                                     case KEY_FILTER_BXP_TAG_ENABLE:
                                     case KEY_FILTER_BXP_TAG_PRECISE:
                                     case KEY_FILTER_BXP_TAG_REVERSE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_FILTER_BXP_TAG_RULES:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(FilterBXPTagIdActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -152,7 +148,7 @@ public class FilterBXPTagIdActivity extends BaseActivity {
                                             }
                                             for (int i = 0, l = filterTagId.size(); i < l; i++) {
                                                 String macAddress = filterTagId.get(i);
-                                                View v = LayoutInflater.from(FilterBXPTagIdActivity.this).inflate(R.layout.lw003_pro_item_tag_id_filter, mBind.llTagId, false);
+                                                View v = LayoutInflater.from(FilterBXPTagIdActivity.this).inflate(R.layout.lw003_plus_item_tag_id_filter, mBind.llTagId, false);
                                                 TextView title = v.findViewById(R.id.tv_tag_id_title);
                                                 EditText etMacAddress = v.findViewById(R.id.et_tag_id);
                                                 title.setText(String.format("Tag ID %d", i + 1));
@@ -189,7 +185,7 @@ public class FilterBXPTagIdActivity extends BaseActivity {
             ToastUtils.showToast(this, "You can set up to 10 filters!");
             return;
         }
-        View v = LayoutInflater.from(this).inflate(R.layout.lw003_pro_item_tag_id_filter, mBind.llTagId, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.lw003_plus_item_tag_id_filter, mBind.llTagId, false);
         TextView title = v.findViewById(R.id.tv_tag_id_title);
         title.setText(String.format("Tag ID %d", count + 1));
         mBind.llTagId.addView(v);

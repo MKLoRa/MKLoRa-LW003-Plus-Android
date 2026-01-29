@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TimePointAdapter extends BaseItemDraggableAdapter<TimePoint, BaseViewHolder> {
     public TimePointAdapter(List<TimePoint> data) {
-        super(R.layout.lw003_pro_item_time_point, data);
+        super(R.layout.lw003_plus_item_time_point, data);
     }
 
     @Override

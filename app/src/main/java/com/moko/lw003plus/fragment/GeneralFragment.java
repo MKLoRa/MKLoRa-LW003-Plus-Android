@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.lw003plus.activity.DeviceInfoActivity;
-import com.moko.lw003plus.databinding.Lw003ProFragmentGeneralBinding;
+import com.moko.lw003plus.databinding.Lw003PlusFragmentGeneralBinding;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
 
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class GeneralFragment extends Fragment {
     private static final String TAG = GeneralFragment.class.getSimpleName();
 
-    private Lw003ProFragmentGeneralBinding mBind;
+    private Lw003PlusFragmentGeneralBinding mBind;
 
     private DeviceInfoActivity activity;
 
@@ -36,7 +36,7 @@ public class GeneralFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
-        mBind = Lw003ProFragmentGeneralBinding.inflate(inflater, container, false);
+        mBind = Lw003PlusFragmentGeneralBinding.inflate(inflater, container, false);
         activity = (DeviceInfoActivity) getActivity();
         return mBind.getRoot();
     }

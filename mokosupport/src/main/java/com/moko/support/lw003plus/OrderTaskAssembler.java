@@ -19,6 +19,7 @@ import androidx.annotation.IntRange;
 public class OrderTaskAssembler {
     ///////////////////////////////////////////////////////////////////////////
     // READ
+
     ///////////////////////////////////////////////////////////////////////////
 
     public static OrderTask getManufacturer() {
@@ -82,6 +83,12 @@ public class OrderTaskAssembler {
         return task;
     }
 
+    public static OrderTask getOffByMagnetic() {
+        ParamsReadTask task = new ParamsReadTask();
+        task.setData(ParamsKeyEnum.KEY_OFF_BY_MAGNETIC);
+        return task;
+    }
+
     public static OrderTask getOffByButton() {
         ParamsReadTask task = new ParamsReadTask();
         task.setData(ParamsKeyEnum.KEY_OFF_BY_BUTTON);
@@ -128,12 +135,6 @@ public class OrderTaskAssembler {
     public static OrderTask getLowPowerPercent() {
         ParamsReadTask task = new ParamsReadTask();
         task.setData(ParamsKeyEnum.KEY_LOW_POWER_PERCENT);
-        return task;
-    }
-
-    public static OrderTask getChargePriority() {
-        ParamsReadTask task = new ParamsReadTask();
-        task.setData(ParamsKeyEnum.KEY_CHARGE_PRIORITY);
         return task;
     }
 
@@ -493,6 +494,24 @@ public class OrderTaskAssembler {
         return task;
     }
 
+    public static OrderTask getFilterNanoEnable() {
+        ParamsReadTask task = new ParamsReadTask();
+        task.setData(ParamsKeyEnum.KEY_FILTER_NANO_ENABLE);
+        return task;
+    }
+
+    public static OrderTask getFilterNanoAdvType() {
+        ParamsReadTask task = new ParamsReadTask();
+        task.setData(ParamsKeyEnum.KEY_FILTER_NANO_ADV_TYPE);
+        return task;
+    }
+
+    public static OrderTask getFilterNanoTriggerStatus() {
+        ParamsReadTask task = new ParamsReadTask();
+        task.setData(ParamsKeyEnum.KEY_FILTER_NANO_TRIGGER_STATUS);
+        return task;
+    }
+
     public static OrderTask getFilterOtherEnable() {
         ParamsReadTask task = new ParamsReadTask();
         task.setData(ParamsKeyEnum.KEY_FILTER_OTHER_ENABLE);
@@ -653,6 +672,18 @@ public class OrderTaskAssembler {
     public static OrderTask getEventPayloadSettings() {
         ParamsReadTask task = new ParamsReadTask();
         task.setData(ParamsKeyEnum.KEY_EVENT_PAYLOAD);
+        return task;
+    }
+
+    public static OrderTask getPosPayloadSettings() {
+        ParamsReadTask task = new ParamsReadTask();
+        task.setData(ParamsKeyEnum.KEY_POS_PAYLOAD);
+        return task;
+    }
+
+    public static OrderTask getGPSPayloadSettings() {
+        ParamsReadTask task = new ParamsReadTask();
+        task.setData(ParamsKeyEnum.KEY_GPS_PAYLOAD);
         return task;
     }
 
@@ -824,6 +855,12 @@ public class OrderTaskAssembler {
         return task;
     }
 
+    public static OrderTask getPayloadNanoContent() {
+        ParamsReadTask task = new ParamsReadTask();
+        task.setData(ParamsKeyEnum.KEY_PAYLOAD_NANO_CONTENT);
+        return task;
+    }
+
     public static OrderTask getPayloadOtherContent() {
         ParamsReadTask task = new ParamsReadTask();
         task.setData(ParamsKeyEnum.KEY_PAYLOAD_OTHER_CONTENT);
@@ -892,6 +929,7 @@ public class OrderTaskAssembler {
 
     ///////////////////////////////////////////////////////////////////////////
     // WRITE
+
     ///////////////////////////////////////////////////////////////////////////
     public static OrderTask setPassword(String password) {
         SetPasswordTask task = new SetPasswordTask();
@@ -941,6 +979,12 @@ public class OrderTaskAssembler {
         return task;
     }
 
+    public static OrderTask setOffByMagnetic(@IntRange(from = 0, to = 1) int enable) {
+        ParamsWriteTask task = new ParamsWriteTask();
+        task.setOffByMagnetic(enable);
+        return task;
+    }
+
     public static OrderTask setOffByButton(@IntRange(from = 0, to = 1) int enable) {
         ParamsWriteTask task = new ParamsWriteTask();
         task.setOffByButton(enable);
@@ -967,10 +1011,18 @@ public class OrderTaskAssembler {
 
     public static OrderTask setIndicatorStatus(@IntRange(from = 0, to = 1) int lowPowerStatus,
                                                @IntRange(from = 0, to = 1) int chargingStatus,
-                                               @IntRange(from = 0, to = 1) int bleAdvStatus) {
+                                               @IntRange(from = 0, to = 1) int fullCharged,
+                                               @IntRange(from = 0, to = 1) int bleAdvStatus,
+                                               @IntRange(from = 0, to = 1) int fix,
+                                               @IntRange(from = 0, to = 1) int fixSuccess,
+                                               @IntRange(from = 0, to = 1) int fixFail) {
         ParamsWriteTask task = new ParamsWriteTask();
         task.setIndicatorStatus(lowPowerStatus,
                 chargingStatus,
+                fullCharged,
+                fix,
+                fixSuccess,
+                fixFail,
                 bleAdvStatus);
         return task;
     }
@@ -990,12 +1042,6 @@ public class OrderTaskAssembler {
     public static OrderTask setLowPowerPercent(@IntRange(from = 0, to = 4) int percent) {
         ParamsWriteTask task = new ParamsWriteTask();
         task.setLowPowerPercent(percent);
-        return task;
-    }
-
-    public static OrderTask setChargePriority(@IntRange(from = 0, to = 1) int priority) {
-        ParamsWriteTask task = new ParamsWriteTask();
-        task.setChargePriority(priority);
         return task;
     }
 
@@ -1228,6 +1274,24 @@ public class OrderTaskAssembler {
                                                      @IntRange(from = 0, to = 65535) int max) {
         ParamsWriteTask task = new ParamsWriteTask();
         task.setFilterMkPirMinorRange(min, max);
+        return task;
+    }
+
+    public static OrderTask setFilterNanoEnable(@IntRange(from = 0, to = 1) int enable) {
+        ParamsWriteTask task = new ParamsWriteTask();
+        task.setFilterNanoEnable(enable);
+        return task;
+    }
+
+    public static OrderTask setFilterNanoAdvType(@IntRange(from = 0, to = 2) int type) {
+        ParamsWriteTask task = new ParamsWriteTask();
+        task.setFilterNanoAdvType(type);
+        return task;
+    }
+
+    public static OrderTask setFilterNanoTriggerStatus(@IntRange(from = 0, to = 4) int status) {
+        ParamsWriteTask task = new ParamsWriteTask();
+        task.setFilterNanoTriggerStatus(status);
         return task;
     }
 
@@ -1506,6 +1570,18 @@ public class OrderTaskAssembler {
         return task;
     }
 
+    public static OrderTask setPosPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
+        ParamsWriteTask task = new ParamsWriteTask();
+        task.setPosPayloadSettings(enable, times);
+        return task;
+    }
+
+    public static OrderTask setGpsPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
+        ParamsWriteTask task = new ParamsWriteTask();
+        task.setGpsPayloadSettings(enable, times);
+        return task;
+    }
+
     public static OrderTask setHeartBeatInterval(@IntRange(from = 1, to = 14400) int interval) {
         ParamsWriteTask task = new ParamsWriteTask();
         task.setHeartBeatInterval(interval);
@@ -1669,6 +1745,12 @@ public class OrderTaskAssembler {
     public static OrderTask setPayloadBXPPIRContent(@IntRange(from = 0, to = 0x3FFF) int flag) {
         ParamsWriteTask task = new ParamsWriteTask();
         task.setPayloadBXPPIRContent(flag);
+        return task;
+    }
+
+    public static OrderTask setPayloadNanoContent(@IntRange(from = 0, to = 0x03FF) int flag) {
+        ParamsWriteTask task = new ParamsWriteTask();
+        task.setPayloadNanoContent(flag);
         return task;
     }
 

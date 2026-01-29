@@ -15,7 +15,7 @@ import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lib.loraui.utils.ToastUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivitySelftestBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivitySelftestBinding;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
 import com.moko.support.lw003plus.entity.OrderCHAR;
@@ -31,7 +31,7 @@ import java.util.List;
 
 public class SelfTestActivity extends BaseActivity {
 
-    private Lw003ProActivitySelftestBinding mBind;
+    private Lw003PlusActivitySelftestBinding mBind;
 
     private ArrayList<String> mValues;
     private boolean savedParamsError;
@@ -39,7 +39,7 @@ public class SelfTestActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivitySelftestBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivitySelftestBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         mValues = new ArrayList<>();
         for (int i = 44; i <= 64; i++) {

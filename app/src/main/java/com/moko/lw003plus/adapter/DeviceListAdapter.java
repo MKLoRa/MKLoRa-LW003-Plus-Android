@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class DeviceListAdapter extends BaseQuickAdapter<AdvInfo, BaseViewHolder> {
     public DeviceListAdapter() {
-        super(R.layout.lw003_pro_list_item_device);
+        super(R.layout.lw003_plus_list_item_device);
     }
 
     @Override

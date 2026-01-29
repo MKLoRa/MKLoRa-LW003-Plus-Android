@@ -13,7 +13,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterMkPirBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterMkPirBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -30,7 +30,7 @@ import java.util.List;
 
 
 public class FilterMKPIRActivity extends BaseActivity {
-    private Lw003ProActivityFilterMkPirBinding mBind;
+    private Lw003PlusActivityFilterMkPirBinding mBind;
     private final String[] detectionStatusArray = {"No motion detected", "Motion detected", "All"};
     private final String[] sensorSensitivityArray = {"Low", "Medium", "High", "All"};
     private final String[] doorStatusArray = {"Close", "Open", "All"};
@@ -49,7 +49,7 @@ public class FilterMKPIRActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterMkPirBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterMkPirBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         showSyncingProgressDialog();

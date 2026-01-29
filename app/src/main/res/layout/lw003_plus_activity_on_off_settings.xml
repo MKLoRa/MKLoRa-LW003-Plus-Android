@@ -56,6 +56,50 @@
         android:paddingRight="12dp"
         android:paddingBottom="10dp">
 
+        <LinearLayout
+            android:id="@+id/llSwitchMethod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:gravity="center_vertical"
+                android:text="ON/Off Method"
+                android:textColor="@color/black_333333"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvPowerOnMethod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/shape_radius_blue_btn_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:minWidth="70dp"
+                android:onClick="onPowerOnMethod"
+                android:padding="12dp"
+                android:text="Continuous approach"
+                android:textColor="@color/white_ffffff"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+
+        <View
+            style="@style/divider_line"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/llSwitchMethod" />
+
         <CheckBox
             android:id="@+id/cb_off_by_button"
             android:layout_width="0dp"
@@ -69,7 +113,7 @@
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/llSwitchMethod" />
 
         <View
             style="@style/divider_line"

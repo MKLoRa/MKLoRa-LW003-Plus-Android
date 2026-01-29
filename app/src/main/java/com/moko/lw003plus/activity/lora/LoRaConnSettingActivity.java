@@ -18,7 +18,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityConnSettingBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityConnSettingBinding;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
@@ -36,7 +36,7 @@ import java.util.List;
 
 public class LoRaConnSettingActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
 
-    private Lw003ProActivityConnSettingBinding mBind;
+    private Lw003PlusActivityConnSettingBinding mBind;
 
     private boolean mReceiverTag = false;
     private ArrayList<String> mModeList;
@@ -57,7 +57,7 @@ public class LoRaConnSettingActivity extends BaseActivity implements CompoundBut
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityConnSettingBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityConnSettingBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         mModeList = new ArrayList<>();
         mModeList.add("ABP");
@@ -167,14 +167,10 @@ public class LoRaConnSettingActivity extends BaseActivity implements CompoundBut
                                     case KEY_LORA_DUTYCYCLE:
                                     case KEY_LORA_ADR_ACK_LIMIT:
                                     case KEY_LORA_ADR_ACK_DELAY:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_LORA_UPLINK_STRATEGY:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(LoRaConnSettingActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -183,9 +179,7 @@ public class LoRaConnSettingActivity extends BaseActivity implements CompoundBut
                                         }
                                         break;
                                     case KEY_REBOOT:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

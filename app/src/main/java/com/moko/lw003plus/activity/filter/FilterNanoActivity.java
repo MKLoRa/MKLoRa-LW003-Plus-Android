@@ -1,13 +1,7 @@
-package com.moko.lw003plus.activity.strategies;
+package com.moko.lw003plus.activity.filter;
 
 
-import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.moko.ble.lib.MokoConstants;
@@ -16,8 +10,9 @@ import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
+import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003PlusActivityScanAlwaysPeriodicReportBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterNanoBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -32,33 +27,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
+public class FilterNanoActivity extends BaseActivity {
 
-    private Lw003PlusActivityScanAlwaysPeriodicReportBinding mBind;
-    private boolean mReceiverTag = false;
+
+    private Lw003PlusActivityFilterNanoBinding mBind;
+
     private boolean savedParamsError;
+
+    private String[] mAdvType = new String[]{"Null", "Normal Adv Type", "Trigger Adv Type" };
+    private String[] mTriggerStatus = new String[]{"Null", "No Alarm", "Cut-off Alarm", "Button Alarm", "Button Alarm and Cut-off Alarm" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003PlusActivityScanAlwaysPeriodicReportBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterNanoBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
-        // 注册广播接收器
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mReceiver, filter);
-        mReceiverTag = true;
+
         showSyncingProgressDialog();
-        mBind.etReportInterval.postDelayed(() -> {
+        mBind.tvTitle.postDelayed(() -> {
             List<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.getScanAlwaysPeriodicReportParams());
+            orderTasks.add(OrderTaskAssembler.getFilterNanoEnable());
+            orderTasks.add(OrderTaskAssembler.getFilterNanoAdvType());
+            orderTasks.add(OrderTaskAssembler.getFilterNanoTriggerStatus());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
 
 
-    @Subscribe(threadMode = ThreadMode.POSTING, priority = 300)
+    @Subscribe(threadMode = ThreadMode.POSTING, priority = 400)
     public void onConnectStatusEvent(ConnectStatusEvent event) {
         final String action = event.getAction();
         runOnUiThread(() -> {
@@ -68,7 +65,7 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING, priority = 300)
+    @Subscribe(threadMode = ThreadMode.POSTING, priority = 400)
     public void onOrderTaskResponseEvent(OrderTaskResponseEvent event) {
         final String action = event.getAction();
         if (!MokoConstants.ACTION_CURRENT_DATA.equals(action))
@@ -101,10 +98,18 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
                                 // write
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
-                                    case KEY_SCAN_ALWAYS_PERIODIC_REPORT_PARAMS:
-                                        savedParamsError |= result != 1;
+                                    case KEY_FILTER_NANO_ADV_TYPE:
+                                    case KEY_FILTER_NANO_TRIGGER_STATUS:
+                                        if (result != 1) {
+                                            savedParamsError = true;
+                                        }
+                                        break;
+                                    case KEY_FILTER_NANO_ENABLE:
+                                        if (result != 1) {
+                                            savedParamsError = true;
+                                        }
                                         if (savedParamsError) {
-                                            ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
+                                            ToastUtils.showToast(FilterNanoActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
                                             ToastUtils.showToast(this, "Save Successfully！");
                                         }
@@ -114,13 +119,25 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
                             if (flag == 0x00) {
                                 // read
                                 switch (configKeyEnum) {
-                                    case KEY_SCAN_ALWAYS_PERIODIC_REPORT_PARAMS:
+                                    case KEY_FILTER_NANO_ADV_TYPE:
                                         if (length > 0) {
-                                            int interval = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
-                                            mBind.etReportInterval.setText(String.valueOf(interval));
+                                            int type = value[5] & 0xFF;
+                                            mBind.tvNanoType.setText(mAdvType[type]);
+                                            mBind.tvNanoType.setTag(type);
                                         }
                                         break;
-
+                                    case KEY_FILTER_NANO_TRIGGER_STATUS:
+                                        if (length > 0) {
+                                            int status = value[5] & 0xFF;
+                                            mBind.tvTriggerStatus.setText(mTriggerStatus[status]);
+                                            mBind.tvTriggerStatus.setTag(status);
+                                        }
+                                        break;
+                                    case KEY_FILTER_NANO_ENABLE:
+                                        if (length > 0) {
+                                            mBind.cbNanoEnable.setChecked(value[5] == 1);
+                                        }
+                                        break;
                                 }
                             }
                         }
@@ -130,35 +147,9 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
         });
     }
 
-
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (intent != null) {
-                String action = intent.getAction();
-                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
-                    int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-                    switch (blueState) {
-                        case BluetoothAdapter.STATE_TURNING_OFF:
-                            dismissSyncProgressDialog();
-                            finish();
-                            break;
-                    }
-                }
-            }
-        }
-    };
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mReceiverTag) {
-            mReceiverTag = false;
-            // 注销广播
-            unregisterReceiver(mReceiver);
-        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -178,20 +169,41 @@ public class ScanAlwaysPeriodicReportActivity extends BaseActivity {
     }
 
     public void onSave(View view) {
-        savedParamsError = false;
-        final String intervalStr = mBind.etReportInterval.getText().toString();
-        if (TextUtils.isEmpty(intervalStr)) {
-            ToastUtils.showToast(this, "Para error!");
+        if (isWindowLocked())
             return;
-        }
-        final int interval = Integer.parseInt(intervalStr);
-        if (interval < 3 || interval > 65535) {
-            ToastUtils.showToast(this, "Para error!");
-            return;
-        }
+        int type = (int) mBind.tvNanoType.getTag();
+        int status = (int) mBind.tvTriggerStatus.getTag();
         showSyncingProgressDialog();
         List<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setScanAlwaysPeriodicReportParams(interval));
+        orderTasks.add(OrderTaskAssembler.setFilterNanoAdvType(type));
+        orderTasks.add(OrderTaskAssembler.setFilterNanoTriggerStatus(status));
+        orderTasks.add(OrderTaskAssembler.setFilterNanoEnable(mBind.cbNanoEnable.isChecked() ? 1 : 0));
         LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+    }
+
+    public void onNanoType(View view) {
+        if (isWindowLocked())
+            return;
+        int selected = (int) view.getTag();
+        BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(new ArrayList<>(Arrays.asList(mAdvType)), selected);
+        dialog.setListener(value -> {
+            view.setTag(value);
+            mBind.tvNanoType.setText(mAdvType[value]);
+        });
+        dialog.show(getSupportFragmentManager());
+    }
+
+    public void onTriggerStatus(View view) {
+        if (isWindowLocked())
+            return;
+        int selected = (int) view.getTag();
+        BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(new ArrayList<>(Arrays.asList(mTriggerStatus)), selected);
+        dialog.setListener(value -> {
+            view.setTag(value);
+            mBind.tvTriggerStatus.setText(mTriggerStatus[value]);
+        });
+        dialog.show(getSupportFragmentManager());
     }
 }

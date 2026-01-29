@@ -16,7 +16,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterMkTofBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterMkTofBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FilterMKTOFActivity extends BaseActivity {
-    private Lw003ProActivityFilterMkTofBinding mBind;
+    private Lw003PlusActivityFilterMkTofBinding mBind;
 
     private int mkTofEnableFlag;
     private ArrayList<String> filterMfgCode;
@@ -40,7 +40,7 @@ public class FilterMKTOFActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterMkTofBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterMkTofBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         filterMfgCode = new ArrayList<>();
@@ -122,7 +122,7 @@ public class FilterMKTOFActivity extends BaseActivity {
                                         }
                                         for (int i = 0, l = filterMfgCode.size(); i < l; i++) {
                                             String macAddress = filterMfgCode.get(i);
-                                            View v = LayoutInflater.from(this).inflate(R.layout.lw003_pro_item_tof_filter, mBind.llMfgCode, false);
+                                            View v = LayoutInflater.from(this).inflate(R.layout.lw003_plus_item_tof_filter, mBind.llMfgCode, false);
                                             TextView title = v.findViewById(R.id.tv_mfg_code_title);
                                             EditText etMacAddress = v.findViewById(R.id.et_mfg_code);
                                             title.setText(String.format("Code %d", i + 1));
@@ -158,7 +158,7 @@ public class FilterMKTOFActivity extends BaseActivity {
             ToastUtils.showToast(this, "You can set up to 10 filters!");
             return;
         }
-        View v = LayoutInflater.from(this).inflate(R.layout.lw003_pro_item_tof_filter, mBind.llMfgCode, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.lw003_plus_item_tof_filter, mBind.llMfgCode, false);
         TextView title = v.findViewById(R.id.tv_mfg_code_title);
         title.setText(String.format("Code %d", count + 1));
         mBind.llMfgCode.addView(v);

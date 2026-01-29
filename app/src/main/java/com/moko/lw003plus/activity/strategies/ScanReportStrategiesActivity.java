@@ -13,7 +13,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityScanReportStrategiesBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityScanReportStrategiesBinding;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
@@ -31,14 +31,14 @@ import java.util.List;
 
 public class ScanReportStrategiesActivity extends BaseActivity {
 
-    private Lw003ProActivityScanReportStrategiesBinding mBind;
+    private Lw003PlusActivityScanReportStrategiesBinding mBind;
     private boolean savedParamsError;
     private ArrayList<String> mDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityScanReportStrategiesBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityScanReportStrategiesBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         mDataList = new ArrayList<>();
@@ -103,9 +103,7 @@ public class ScanReportStrategiesActivity extends BaseActivity {
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
                                     case KEY_SCAN_REPORT_STRATEGIES:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(ScanReportStrategiesActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

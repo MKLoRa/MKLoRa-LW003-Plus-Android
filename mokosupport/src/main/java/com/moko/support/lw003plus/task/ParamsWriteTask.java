@@ -124,6 +124,17 @@ public class ParamsWriteTask extends OrderTask {
         };
     }
 
+    public void setOffByMagnetic(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_OFF_BY_MAGNETIC.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+    }
     public void setOffByButton(@IntRange(from = 0, to = 1) int enable) {
         byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_OFF_BY_BUTTON.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
@@ -174,17 +185,25 @@ public class ParamsWriteTask extends OrderTask {
 
     public void setIndicatorStatus(@IntRange(from = 0, to = 1) int lowPowerStatus,
                                    @IntRange(from = 0, to = 1) int chargingStatus,
-                                   @IntRange(from = 0, to = 1) int bleAdvStatus) {
+                                   @IntRange(from = 0, to = 1) int fullCharged,
+                                   @IntRange(from = 0, to = 1) int bleAdvStatus,
+                                   @IntRange(from = 0, to = 1) int fix,
+                                   @IntRange(from = 0, to = 1) int fixSuccess,
+                                   @IntRange(from = 0, to = 1) int fixFail) {
         byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_INDICATOR_STATUS.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
                 (byte) 0xED,
                 (byte) 0x01,
                 (byte) cmdBytes[0],
                 (byte) cmdBytes[1],
-                (byte) 0x03,
+                (byte) 0x07,
                 (byte) lowPowerStatus,
                 (byte) chargingStatus,
-                (byte) bleAdvStatus
+                (byte) fullCharged,
+                (byte) bleAdvStatus,
+                (byte) fix,
+                (byte) fixSuccess,
+                (byte) fixFail,
         };
 
     }
@@ -224,19 +243,6 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) cmdBytes[1],
                 (byte) 0x01,
                 (byte) percent
-        };
-
-    }
-
-    public void setChargePriority(@IntRange(from = 0, to = 1) int priority) {
-        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CHARGE_PRIORITY.getParamsKey(), 2);
-        response.responseValue = data = new byte[]{
-                (byte) 0xED,
-                (byte) 0x01,
-                (byte) cmdBytes[0],
-                (byte) cmdBytes[1],
-                (byte) 0x01,
-                (byte) priority
         };
 
     }
@@ -825,6 +831,43 @@ public class ParamsWriteTask extends OrderTask {
                 maxBytes[1]
         };
     }
+
+    public void setFilterNanoEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_FILTER_NANO_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+    }
+
+    public void setFilterNanoAdvType(@IntRange(from = 0, to = 2) int type) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_FILTER_NANO_ADV_TYPE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) type
+        };
+    }
+
+    public void setFilterNanoTriggerStatus(@IntRange(from = 0, to = 4) int status) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_FILTER_NANO_TRIGGER_STATUS.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) status
+        };
+    }
+
 
     public void setFilterMkTofEnable(@IntRange(from = 0, to = 1) int enable) {
         byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_FILTER_MK_TOF_ENABLE.getParamsKey(), 2);
@@ -1522,6 +1565,30 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) times,
         };
     }
+    public void setPosPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_POS_PAYLOAD.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                (byte) enable,
+                (byte) times,
+        };
+    }
+    public void setGpsPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_GPS_PAYLOAD.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                (byte) enable,
+                (byte) times,
+        };
+    }
 
 
     public void setHeartBeatInterval(@IntRange(from = 1, to = 14400) int interval) {
@@ -1911,6 +1978,21 @@ public class ParamsWriteTask extends OrderTask {
                 flagBytes[0],
                 flagBytes[1],
                 flagBytes[2],
+        };
+
+    }
+
+    public void setPayloadNanoContent(@IntRange(from = 0, to = 0x03FF) int flag) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_PAYLOAD_NANO_CONTENT.getParamsKey(), 2);
+        byte[] flagBytes = MokoUtils.toByteArray(flag, 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                flagBytes[0],
+                flagBytes[1]
         };
 
     }

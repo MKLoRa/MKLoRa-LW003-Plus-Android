@@ -12,6 +12,7 @@ public class PayloadFlag {
     public int BXPButtonFlag = 0x03FFFF;
     public int BXPTagFlag = 0x3FFF;
     public int BXPPIRFlag = 0x3FFF;
+    public int BXPNanoFlag = 0x03FF;
     public int BXPTOFFlag = 0x0FFF;
     public int OtherTypeFlag = 0x1F;
 }

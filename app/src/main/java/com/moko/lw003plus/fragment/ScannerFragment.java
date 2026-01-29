@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.activity.DeviceInfoActivity;
-import com.moko.lw003plus.databinding.Lw003ProFragmentScannerBinding;
+import com.moko.lw003plus.databinding.Lw003PlusFragmentScannerBinding;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
 
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class ScannerFragment extends Fragment {
     private static final String TAG = ScannerFragment.class.getSimpleName();
 
-    private Lw003ProFragmentScannerBinding mBind;
+    private Lw003PlusFragmentScannerBinding mBind;
 
     private ArrayList<String> mDuplicateDataFilterValues;
     private ArrayList<String> mStrategyValues;
@@ -40,7 +40,7 @@ public class ScannerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
-        mBind = Lw003ProFragmentScannerBinding.inflate(inflater, container, false);
+        mBind = Lw003PlusFragmentScannerBinding.inflate(inflater, container, false);
         activity = (DeviceInfoActivity) getActivity();
         mDuplicateDataFilterValues = new ArrayList<>();
         mDuplicateDataFilterValues.add("No");

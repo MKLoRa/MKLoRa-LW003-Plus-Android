@@ -91,34 +91,7 @@
                     android:textSize="13sp" />
 
                 <TextView
-                    android:id="@+id/tv_red_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_green_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_blue_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_axis_sleep_duration"
+                    android:id="@+id/tv_gps_fix_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:gravity="center_vertical"
@@ -128,6 +101,51 @@
 
                 <TextView
                     android:id="@+id/tv_axis_awake_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_power_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_ble_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_lora_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_gps_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_wifi_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:gravity="center_vertical"
@@ -257,34 +275,7 @@
                     android:textSize="13sp" />
 
                 <TextView
-                    android:id="@+id/tv_red_duration_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_green_duration_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_blue_duration_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_axis_sleep_duration_all"
+                    android:id="@+id/tv_gps_fix_duration_all"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:gravity="center_vertical"
@@ -294,6 +285,51 @@
 
                 <TextView
                     android:id="@+id/tv_axis_awake_duration_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_power_duration_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_ble_duration_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_lora_duration_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_gps_duration_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_wifi_duration_all"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:gravity="center_vertical"
@@ -374,34 +410,7 @@
                     android:textSize="13sp" />
 
                 <TextView
-                    android:id="@+id/tv_red_duration_last"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_green_duration_last"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_blue_duration_last"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
-                    android:text=""
-                    android:textColor="@color/black_333333"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tv_axis_sleep_duration_last"
+                    android:id="@+id/tv_gps_fix_duration_last"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:gravity="center_vertical"
@@ -411,6 +420,51 @@
 
                 <TextView
                     android:id="@+id/tv_axis_awake_duration_last"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_power_duration_last"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_ble_duration_last"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_lora_duration_last"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_gps_duration_last"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/black_333333"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_wifi_duration_last"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:gravity="center_vertical"

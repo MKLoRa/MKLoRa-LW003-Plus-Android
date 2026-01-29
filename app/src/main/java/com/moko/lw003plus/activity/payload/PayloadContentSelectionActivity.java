@@ -10,7 +10,7 @@ import com.moko.ble.lib.event.ConnectStatusEvent;
 import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityPayloadContentSelectionBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityPayloadContentSelectionBinding;
 import com.moko.support.lw003plus.entity.OrderCHAR;
 
 import org.greenrobot.eventbus.EventBus;
@@ -19,12 +19,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class PayloadContentSelectionActivity extends BaseActivity {
 
-    private Lw003ProActivityPayloadContentSelectionBinding mBind;
+    private Lw003PlusActivityPayloadContentSelectionBinding mBind;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityPayloadContentSelectionBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityPayloadContentSelectionBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
     }
@@ -138,6 +138,11 @@ public class PayloadContentSelectionActivity extends BaseActivity {
     public void onMKPIRContent(View view) {
         if (isWindowLocked()) return;
         startActivity(new Intent(this, PayloadMKPIRContentActivity.class));
+    }
+
+    public void onNanoContent(View view) {
+        if (isWindowLocked()) return;
+        startActivity(new Intent(this, PayloadNanoContentActivity.class));
     }
 
     public void onOtherTypeContent(View view) {

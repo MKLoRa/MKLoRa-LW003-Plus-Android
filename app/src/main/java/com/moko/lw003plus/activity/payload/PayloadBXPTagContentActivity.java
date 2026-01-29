@@ -11,7 +11,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityPayloadBxpTagContentBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityPayloadBxpTagContentBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -28,13 +28,13 @@ import java.util.List;
 
 public class PayloadBXPTagContentActivity extends BaseActivity {
 
-    private Lw003ProActivityPayloadBxpTagContentBinding mBind;
+    private Lw003PlusActivityPayloadBxpTagContentBinding mBind;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityPayloadBxpTagContentBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityPayloadBxpTagContentBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
 
@@ -91,9 +91,7 @@ public class PayloadBXPTagContentActivity extends BaseActivity {
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
                                     case KEY_PAYLOAD_BXP_TAG_CONTENT:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(PayloadBXPTagContentActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

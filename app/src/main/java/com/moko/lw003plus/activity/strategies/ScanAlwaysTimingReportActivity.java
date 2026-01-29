@@ -21,7 +21,7 @@ import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
 import com.moko.lw003plus.adapter.TimePointAdapter;
-import com.moko.lw003plus.databinding.Lw003ProActivityScanAlwaysTimingReportBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityScanAlwaysTimingReportBinding;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.entity.TimePoint;
 import com.moko.lw003plus.utils.ToastUtils;
@@ -44,7 +44,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ScanAlwaysTimingReportActivity extends BaseActivity implements BaseQuickAdapter.OnItemChildClickListener {
 
-    private Lw003ProActivityScanAlwaysTimingReportBinding mBind;
+    private Lw003PlusActivityScanAlwaysTimingReportBinding mBind;
     private boolean mReceiverTag = false;
     private boolean savedParamsError;
     private ArrayList<TimePoint> mTimePoints;
@@ -57,7 +57,7 @@ public class ScanAlwaysTimingReportActivity extends BaseActivity implements Base
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityScanAlwaysTimingReportBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityScanAlwaysTimingReportBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         mHourValues = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
@@ -182,9 +182,7 @@ public class ScanAlwaysTimingReportActivity extends BaseActivity implements Base
                                         }, 150 * 1000);
                                         break;
                                     case KEY_SCAN_ALWAYS_TIMING_REPORT_TIME_POINT:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

@@ -17,7 +17,7 @@ import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
 import com.moko.lw003plus.activity.LoRaLW003PlusMainActivity;
 import com.moko.lw003plus.adapter.LogDataListAdapter;
-import com.moko.lw003plus.databinding.Lw003ProActivityLogDataBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityLogDataBinding;
 import com.moko.lib.loraui.dialog.AlertMessageDialog;
 import com.moko.lw003plus.entity.LogData;
 import com.moko.lw003plus.utils.Utils;
@@ -43,7 +43,7 @@ public class LogDataActivity extends BaseActivity implements BaseQuickAdapter.On
 
     public static String TAG = LogDataActivity.class.getSimpleName();
 
-    private Lw003ProActivityLogDataBinding mBind;
+    private Lw003PlusActivityLogDataBinding mBind;
     private StringBuilder storeString;
     private ArrayList<LogData> LogDatas;
     private boolean isSync;
@@ -59,7 +59,7 @@ public class LogDataActivity extends BaseActivity implements BaseQuickAdapter.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityLogDataBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityLogDataBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         mDeviceMac = getIntent().getStringExtra(AppConstants.EXTRA_KEY_DEVICE_MAC).replaceAll(":", "");
         logDirPath = LoRaLW003PlusMainActivity.PATH_LOGCAT + File.separator + mDeviceMac;

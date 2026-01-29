@@ -27,7 +27,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.AppConstants;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivitySystemInfoBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivitySystemInfoBinding;
 import com.moko.lw003plus.entity.PayloadFlag;
 import com.moko.lw003plus.service.DfuService;
 import com.moko.lw003plus.utils.DecoderModule;
@@ -56,7 +56,7 @@ import no.nordicsemi.android.dfu.DfuServiceListenerHelper;
 public class SystemInfoActivity extends BaseActivity {
     public static final int REQUEST_CODE_SELECT_FIRMWARE = 0x10;
 
-    private Lw003ProActivitySystemInfoBinding mBind;
+    private Lw003PlusActivitySystemInfoBinding mBind;
     private boolean mReceiverTag = false;
     private String mDeviceMac;
     private String mDeviceName;
@@ -65,7 +65,7 @@ public class SystemInfoActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivitySystemInfoBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivitySystemInfoBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         mPayloadFlag = new PayloadFlag();
@@ -96,6 +96,7 @@ public class SystemInfoActivity extends BaseActivity {
             orderTasks.add(OrderTaskAssembler.getPayloadBXPButtonContent());
             orderTasks.add(OrderTaskAssembler.getPayloadBXPTagContent());
             orderTasks.add(OrderTaskAssembler.getPayloadBXPPIRContent());
+            orderTasks.add(OrderTaskAssembler.getPayloadNanoContent());
             orderTasks.add(OrderTaskAssembler.getPayloadBXPTOFContent());
             orderTasks.add(OrderTaskAssembler.getPayloadOtherContent());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
@@ -234,6 +235,9 @@ public class SystemInfoActivity extends BaseActivity {
                                         break;
                                     case KEY_PAYLOAD_BXP_PIR_CONTENT:
                                         mPayloadFlag.BXPPIRFlag = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
+                                        break;
+                                    case KEY_PAYLOAD_NANO_CONTENT:
+                                        mPayloadFlag.BXPNanoFlag = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
                                         break;
                                     case KEY_PAYLOAD_OTHER_CONTENT:
                                         mPayloadFlag.OtherTypeFlag = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));

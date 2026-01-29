@@ -15,7 +15,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityBleSettingsBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityBleSettingsBinding;
 import com.moko.lib.loraui.dialog.ChangePasswordDialog;
 import com.moko.lw003plus.entity.TxPowerEnum;
 import com.moko.lw003plus.utils.ToastUtils;
@@ -37,7 +37,7 @@ import java.util.TimerTask;
 public class BleSettingsActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
     private final String FILTER_ASCII = "[ -~]*";
 
-    private Lw003ProActivityBleSettingsBinding mBind;
+    private Lw003PlusActivityBleSettingsBinding mBind;
     private boolean savedParamsError;
     private boolean mPasswordVerifyEnable;
     private boolean mPasswordVerifyDisable;
@@ -45,7 +45,7 @@ public class BleSettingsActivity extends BaseActivity implements SeekBar.OnSeekB
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityBleSettingsBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityBleSettingsBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
@@ -121,14 +121,10 @@ public class BleSettingsActivity extends BaseActivity implements SeekBar.OnSeekB
                                     case KEY_ADV_TIMEOUT:
                                     case KEY_ADV_TX_POWER:
                                     case KEY_BEACON_MODE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_PASSWORD_VERIFY_ENABLE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(BleSettingsActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

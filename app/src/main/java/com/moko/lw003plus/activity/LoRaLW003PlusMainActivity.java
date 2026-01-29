@@ -28,7 +28,7 @@ import com.moko.lw003plus.BuildConfig;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.device.LogDataActivity;
 import com.moko.lw003plus.adapter.DeviceListAdapter;
-import com.moko.lw003plus.databinding.Lw003ProActivityMainBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityMainBinding;
 import com.moko.lib.loraui.dialog.AlertMessageDialog;
 import com.moko.lib.loraui.dialog.LoadingMessageDialog;
 import com.moko.lib.loraui.dialog.PasswordDialog;
@@ -66,7 +66,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 public class LoRaLW003PlusMainActivity extends BaseActivity implements MokoScanDeviceCallback, BaseQuickAdapter.OnItemChildClickListener {
-    private Lw003ProActivityMainBinding mBind;
+    private Lw003PlusActivityMainBinding mBind;
     private boolean mReceiverTag = false;
     private ConcurrentHashMap<String, AdvInfo> advInfoMap;
     private ArrayList<AdvInfo> advInfoList;
@@ -82,7 +82,7 @@ public class LoRaLW003PlusMainActivity extends BaseActivity implements MokoScanD
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityMainBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         // 初始化Xlog
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {

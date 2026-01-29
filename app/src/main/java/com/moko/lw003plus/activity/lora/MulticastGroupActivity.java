@@ -11,7 +11,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityMulticastGroupBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityMulticastGroupBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -28,13 +28,13 @@ import java.util.List;
 
 public class MulticastGroupActivity extends BaseActivity {
 
-    private Lw003ProActivityMulticastGroupBinding mBind;
+    private Lw003PlusActivityMulticastGroupBinding mBind;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityMulticastGroupBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityMulticastGroupBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         mBind.cbEnable.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -98,14 +98,10 @@ public class MulticastGroupActivity extends BaseActivity {
                                     case KEY_MULTICAST_GROUP_ADDR:
                                     case KEY_MULTICAST_APP_SKEY:
                                     case KEY_MULTICAST_NWK_SKEY:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_MULTICAST_GROUP_ENABLE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(MulticastGroupActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

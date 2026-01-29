@@ -17,7 +17,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityAlarmPayloadSettingBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityAlarmPayloadSettingBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AlarmPayloadSettingActivity extends BaseActivity {
-    private Lw003ProActivityAlarmPayloadSettingBinding mBind;
+    private Lw003PlusActivityAlarmPayloadSettingBinding mBind;
     private boolean savedParamsError;
     private boolean mReceiverTag;
     private final ArrayList<String> mValues = new ArrayList<>(8);
@@ -41,7 +41,7 @@ public class AlarmPayloadSettingActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityAlarmPayloadSettingBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityAlarmPayloadSettingBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         mValues.add("No");
@@ -114,14 +114,10 @@ public class AlarmPayloadSettingActivity extends BaseActivity {
                             switch (configKeyEnum) {
                                 case KEY_ALARM_DATA_ENABLE:
                                 case KEY_DUPLICATE_ALARM_DATA_FILTER:
-                                    if (result != 1) {
-                                        savedParamsError = true;
-                                    }
+                                    savedParamsError |= result != 1;
                                     break;
                                 case KEY_ALARM_DATA_FILTER_PERIOD:
-                                    if (result != 1) {
-                                        savedParamsError = true;
-                                    }
+                                    savedParamsError |= result != 1;
                                     if (savedParamsError) {
                                         ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
                                     } else {

@@ -8,7 +8,7 @@ import com.moko.lw003plus.entity.LogData;
 public class LogDataListAdapter extends BaseQuickAdapter<LogData, BaseViewHolder> {
 
     public LogDataListAdapter() {
-        super(R.layout.lw003_pro_item_log_data);
+        super(R.layout.lw003_plus_item_log_data);
     }
 
     @Override

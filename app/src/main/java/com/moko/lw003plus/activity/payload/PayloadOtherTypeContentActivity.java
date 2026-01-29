@@ -17,7 +17,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityPayloadOtherTypeContentBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityPayloadOtherTypeContentBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -34,14 +34,14 @@ import java.util.List;
 
 public class PayloadOtherTypeContentActivity extends BaseActivity {
 
-    private Lw003ProActivityPayloadOtherTypeContentBinding mBind;
+    private Lw003PlusActivityPayloadOtherTypeContentBinding mBind;
     private ArrayList<String> mList;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityPayloadOtherTypeContentBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityPayloadOtherTypeContentBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         showSyncingProgressDialog();
@@ -98,14 +98,10 @@ public class PayloadOtherTypeContentActivity extends BaseActivity {
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
                                     case KEY_PAYLOAD_OTHER_CONTENT:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_PAYLOAD_OTHER_DATA_BLOCK:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(PayloadOtherTypeContentActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -133,7 +129,7 @@ public class PayloadOtherTypeContentActivity extends BaseActivity {
                                             int index = 0;
                                             for (int i = 0, l = dataBlockBytes.length; i < l; i += 3, index++) {
                                                 String dataBlockStr = MokoUtils.bytesToHexString(Arrays.copyOfRange(dataBlockBytes, i, i + 3));
-                                                View view = LayoutInflater.from(this).inflate(R.layout.lw003_pro_item_payload_data_block, mBind.llDataBlock, false);
+                                                View view = LayoutInflater.from(this).inflate(R.layout.lw003_plus_item_payload_data_block, mBind.llDataBlock, false);
                                                 TextView tvIndex = view.findViewById(R.id.tv_index);
                                                 EditText etDataType = view.findViewById(R.id.et_data_type);
                                                 EditText etStart = view.findViewById(R.id.et_start);
@@ -173,7 +169,7 @@ public class PayloadOtherTypeContentActivity extends BaseActivity {
             ToastUtils.showToast(this, "You can set up to 10 data blocks!");
             return;
         }
-        View itemView = LayoutInflater.from(this).inflate(R.layout.lw003_pro_item_payload_data_block, mBind.llDataBlock, false);
+        View itemView = LayoutInflater.from(this).inflate(R.layout.lw003_plus_item_payload_data_block, mBind.llDataBlock, false);
         TextView tvIndex = itemView.findViewById(R.id.tv_index);
         tvIndex.setText(String.format("Data block %d", count + 1));
         ImageView ivDel = itemView.findViewById(R.id.iv_del);

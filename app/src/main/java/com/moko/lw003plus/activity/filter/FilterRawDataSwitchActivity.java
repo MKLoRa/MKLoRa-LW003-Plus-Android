@@ -13,7 +13,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterRawDataSwitchBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterRawDataSwitchBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -33,7 +33,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 public class FilterRawDataSwitchActivity extends BaseActivity {
 
-    private Lw003ProActivityFilterRawDataSwitchBinding mBind;
+    private Lw003PlusActivityFilterRawDataSwitchBinding mBind;
     private boolean savedParamsError;
 
     private boolean isBXPDeviceOpen;
@@ -43,7 +43,7 @@ public class FilterRawDataSwitchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterRawDataSwitchBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterRawDataSwitchBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         showSyncingProgressDialog();
@@ -100,9 +100,7 @@ public class FilterRawDataSwitchActivity extends BaseActivity {
                                     case KEY_FILTER_BXP_ACC:
                                     case KEY_FILTER_BXP_TH:
                                     case KEY_FILTER_BXP_DEVICE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(FilterRawDataSwitchActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -115,7 +113,7 @@ public class FilterRawDataSwitchActivity extends BaseActivity {
                                 // read
                                 switch (configKeyEnum) {
                                     case KEY_FILTER_RAW_DATA:
-                                        if (length == 13) {
+                                        if (length == 14) {
                                             dismissSyncProgressDialog();
                                             mBind.tvFilterByOther.setText(value[5] == 1 ? "ON" : "OFF");
                                             mBind.tvFilterByIbeacon.setText(value[6] == 1 ? "ON" : "OFF");
@@ -130,6 +128,7 @@ public class FilterRawDataSwitchActivity extends BaseActivity {
                                             mBind.tvFilterByPir.setText(value[15] == 1 ? "ON" : "OFF");
                                             mBind.tvFilterByTof.setText(value[16] == 1 ? "ON" : "OFF");
                                             mBind.tvFilterByBxpIbeacon.setText(value[17] == 1 ? "ON" : "OFF");
+                                            mBind.tvFilterByNano.setText(value[18] == 1 ? "ON" : "OFF");
                                             isBXPAccOpen = value[10] == 1;
                                             isBXPTHOpen = value[11] == 1;
                                             isBXPDeviceOpen = value[13] == 1;
@@ -268,6 +267,12 @@ public class FilterRawDataSwitchActivity extends BaseActivity {
         startFilterRawData.launch(i);
     }
 
+    public void onFilterByNano(View view) {
+        if (isWindowLocked())
+            return;
+        Intent i = new Intent(this, FilterNanoActivity.class);
+        startFilterRawData.launch(i);
+    }
     public void onFilterByOther(View view) {
         if (isWindowLocked())
             return;

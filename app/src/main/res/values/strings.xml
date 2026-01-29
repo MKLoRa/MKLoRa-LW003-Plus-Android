@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LW003-B Plus</string>
+    <string name="app_name">LW003 Plus</string>
 
     <string name="title_lora">LoRa</string>
     <string name="title_scanner">SCANNER</string>
@@ -46,6 +46,7 @@
     <string name="payload_bxp_button_content">BXP-Button Content</string>
     <string name="payload_mk_tof_content">MK-TOF Content</string>
     <string name="payload_mk_pir_content">MK-PIR Content</string>
+    <string name="payload_nano_content">NanoBeacon Info  Content</string>
     <string name="payload_other_type_content">Other Type Content</string>
     <string name="battery_reset_tips">*After replace with the new battery, need to click \"Reset\", otherwise the low power prompt will be unnormal.</string>
 </resources>

@@ -9,7 +9,7 @@ import android.webkit.WebViewClient;
 
 import com.elvishew.xlog.XLog;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityDecoderBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityDecoderBinding;
 import com.moko.lw003plus.utils.DecoderModule;
 import com.moko.lw003plus.utils.ToastUtils;
 
@@ -21,13 +21,13 @@ import java.io.File;
  * @des:
  */
 public class DecoderActivity extends BaseActivity {
-    private Lw003ProActivityDecoderBinding mBind;
+    private Lw003PlusActivityDecoderBinding mBind;
     private WebView mWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityDecoderBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityDecoderBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         initView();
     }

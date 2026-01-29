@@ -16,7 +16,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityFilterMacAddressBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityFilterMacAddressBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class FilterMacAddressActivity extends BaseActivity {
 
-    private Lw003ProActivityFilterMacAddressBinding mBind;
+    private Lw003PlusActivityFilterMacAddressBinding mBind;
     private boolean savedParamsError;
 
     private ArrayList<String> filterMacAddress;
@@ -41,7 +41,7 @@ public class FilterMacAddressActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityFilterMacAddressBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityFilterMacAddressBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         filterMacAddress = new ArrayList<>();
@@ -100,14 +100,10 @@ public class FilterMacAddressActivity extends BaseActivity {
                                 switch (configKeyEnum) {
                                     case KEY_FILTER_MAC_PRECISE:
                                     case KEY_FILTER_MAC_REVERSE:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_FILTER_MAC_RULES:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(FilterMacAddressActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
@@ -143,7 +139,7 @@ public class FilterMacAddressActivity extends BaseActivity {
                                             }
                                             for (int i = 0, l = filterMacAddress.size(); i < l; i++) {
                                                 String macAddress = filterMacAddress.get(i);
-                                                View v = LayoutInflater.from(FilterMacAddressActivity.this).inflate(R.layout.lw003_pro_item_mac_address_filter, mBind.llMacAddress, false);
+                                                View v = LayoutInflater.from(FilterMacAddressActivity.this).inflate(R.layout.lw003_plus_item_mac_address_filter, mBind.llMacAddress, false);
                                                 TextView title = v.findViewById(R.id.tv_mac_address_title);
                                                 EditText etMacAddress = v.findViewById(R.id.et_mac_address);
                                                 title.setText(String.format("MAC %d", i + 1));
@@ -180,7 +176,7 @@ public class FilterMacAddressActivity extends BaseActivity {
             ToastUtils.showToast(this, "You can set up to 10 filters!");
             return;
         }
-        View v = LayoutInflater.from(this).inflate(R.layout.lw003_pro_item_mac_address_filter, mBind.llMacAddress, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.lw003_plus_item_mac_address_filter, mBind.llMacAddress, false);
         TextView title = v.findViewById(R.id.tv_mac_address_title);
         title.setText(String.format("MAC %d", count + 1));
         mBind.llMacAddress.addView(v);

@@ -17,7 +17,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003ProActivityAppSettingBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityAppSettingBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -34,7 +34,7 @@ import java.util.List;
 
 public class LoRaAppSettingActivity extends BaseActivity {
 
-    private Lw003ProActivityAppSettingBinding mBind;
+    private Lw003PlusActivityAppSettingBinding mBind;
 
     private boolean mReceiverTag = false;
     private boolean savedParamsError;
@@ -42,7 +42,7 @@ public class LoRaAppSettingActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003ProActivityAppSettingBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityAppSettingBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         // 注册广播接收器
@@ -108,9 +108,7 @@ public class LoRaAppSettingActivity extends BaseActivity {
                                         }
                                         break;
                                     case KEY_LORA_NETWORK_CHECK_INTERVAL:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(LoRaAppSettingActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {

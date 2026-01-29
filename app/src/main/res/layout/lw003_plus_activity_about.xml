@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        android:src="@drawable/lw003_pro_ic_logo" />
+        android:src="@drawable/lw003_plus_ic_logo" />
 
     <TextView
         android:id="@+id/app_name"
@@ -60,7 +60,7 @@
         android:layout_below="@id/iv_logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:text="LW003-B PRO"
+        android:text="LW003-B PLUS"
         android:textColor="@color/grey_888888"
         android:textSize="20sp" />
 
@@ -71,7 +71,7 @@
         android:layout_below="@id/app_name"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:text="APP Version:V1.0.2"
+        android:text="APP Version:V1.0.0"
         android:textColor="@color/grey_a8a8a8"
         android:textSize="17sp" />
 

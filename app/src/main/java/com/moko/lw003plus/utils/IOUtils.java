@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.Plusvider.MediaStore;
+import android.provider.MediaStore;
 
 import com.elvishew.xlog.XLog;
 import com.moko.lw003plus.BuildConfig;

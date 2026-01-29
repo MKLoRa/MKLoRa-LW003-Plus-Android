@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:button="@null"
-                android:drawableTop="@drawable/lw003_pro_selector_scanner"
+                android:drawableTop="@drawable/selector_tab_scanner"
                 android:drawablePadding="5dp"
                 android:gravity="center"
                 android:paddingTop="10dp"

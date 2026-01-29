@@ -386,6 +386,164 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Positioning Payload Type"
+                    android:textColor="@color/black_333333"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tv_pos_payload_type"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_pos_payload_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_radius_blue_btn_bg"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:minWidth="70dp"
+                    android:onClick="selectPosPayloadType"
+                    android:padding="12dp"
+                    android:text="Unconfirmed"
+                    android:textColor="@color/white_ffffff"
+                    android:textSize="15sp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_pos_payload_times"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_pos_payload_type">
+
+                    <View
+                        style="@style/divider_line"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Max Retransmission Times"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBaseline_toBaselineOf="@id/tv_pos_payload_times"
+                        app:layout_constraintLeft_toLeftOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_pos_payload_times"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_radius_blue_btn_bg"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:minWidth="70dp"
+                        android:onClick="selectPosPayloadTimes"
+                        android:padding="12dp"
+                        android:text="2"
+                        android:textColor="@color/white_ffffff"
+                        android:textSize="15sp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white_ffffff"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GPS Limit Payload Type"
+                    android:textColor="@color/black_333333"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBaseline_toBaselineOf="@id/tv_gps_payload_type"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_gps_payload_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_radius_blue_btn_bg"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:minWidth="70dp"
+                    android:onClick="selectGPSPayloadType"
+                    android:padding="12dp"
+                    android:text="Unconfirmed"
+                    android:textColor="@color/white_ffffff"
+                    android:textSize="15sp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_gps_payload_times"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_gps_payload_type">
+
+                    <View
+                        style="@style/divider_line"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Max Retransmission Times"
+                        android:textColor="@color/black_333333"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBaseline_toBaselineOf="@id/tv_gps_payload_times"
+                        app:layout_constraintLeft_toLeftOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_gps_payload_times"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_radius_blue_btn_bg"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:minWidth="70dp"
+                        android:onClick="selectGPSPayloadTimes"
+                        android:padding="12dp"
+                        android:text="2"
+                        android:textColor="@color/white_ffffff"
+                        android:textSize="15sp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white_ffffff"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Beacon Payload Type"
                     android:textColor="@color/black_333333"
                     android:textSize="15sp"
