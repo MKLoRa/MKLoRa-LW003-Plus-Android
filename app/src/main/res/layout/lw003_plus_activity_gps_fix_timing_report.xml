@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/scan_always_timing_report"
+            android:text="Timing Report Settings"
             android:textColor="@color/white_ffffff"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -59,7 +59,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Report Time Point"
+            android:text="Reporting Time Point"
             android:textColor="@color/black_333333"
             android:textSize="15sp"
             android:textStyle="bold"

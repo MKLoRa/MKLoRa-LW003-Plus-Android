@@ -208,9 +208,7 @@ public class TimingScanImmediatelyReportActivity extends BaseActivity implements
                                         }, 150 * 1000);
                                         break;
                                     case KEY_TIMING_SCAN_IMMEDIATELY_REPORT_DURATION:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_TIMING_SCAN_IMMEDIATELY_REPORT_TIME_POINT:
                                         savedParamsError |= result != 1;

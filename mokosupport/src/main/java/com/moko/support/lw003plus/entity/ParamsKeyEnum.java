@@ -51,6 +51,9 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_HUMIDITY_CURRENT(0x0045),
     // 太阳能充电电流
     KEY_SOLAR_CHARGING_CURRENT(0x0046),
+    // 三轴唤醒条件
+    KEY_ACC_WAKEUP_CONDITION(0x0028),
+    KEY_ACC_MOTION_CONDITION(0x0029),
 
     //// 电池相关参数
     // 电池信息清除
@@ -69,12 +72,18 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_LOW_POWER_REPORT_INTERVAL(0x0107),
     // 充电自动开机
     KEY_AUTO_POWER_ON_ENABLE(0x0108),
-    // 低电电压值
-    KEY_LOW_POWER_VOLTAGE_THRESHOLD(0x010A),
-    // 最小采样间隔
-    KEY_LOW_POWER_MIN_SAMPLE_INTERVAL(0x010B),
-    // 低电检测采样次数
-    KEY_LOW_POWER_SAMPLE_TIMES(0x010C),
+    // LORA低电电压值
+    KEY_CONDITION_1_VOLTAGE_THRESHOLD(0x010A),
+    // LORA最小采样间隔
+    KEY_CONDITION_1_MIN_SAMPLE_INTERVAL(0x010B),
+    // LORA低电检测采样次数
+    KEY_CONDITION_1_SAMPLE_TIMES(0x010C),
+    // GPS低电电压值
+    KEY_CONDITION_2_VOLTAGE_THRESHOLD(0x010E),
+    // GPS最小采样间隔
+    KEY_CONDITION_2_MIN_SAMPLE_INTERVAL(0x010F),
+    // GPS低电检测采样次数
+    KEY_CONDITION_2_SAMPLE_TIMES(0x0110),
 
     //// 蓝牙相关参数
     // 登录是否需要密码
@@ -85,6 +94,59 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_ADV_INTERVAL(0x0204),
     KEY_ADV_TX_POWER(0x0205),
     KEY_ADV_NAME(0x0206),
+    //// 模式相关参数
+    // 工作模式选择
+    KEY_DEVICE_MODE(0x0300),
+    // 离线定位功能开关
+    KEY_OFFLINE_LOCATION_ENABLE(0x0800),
+    // 待机模式下定位策略选择
+    KEY_STANDBY_MODE_POS_STRATEGY(0x0310),
+    // 定期模式定位策略
+    KEY_PERIODIC_MODE_POS_STRATEGY(0x0320),
+    // 定期模式上报间隔
+    KEY_PERIODIC_MODE_REPORT_INTERVAL(0x0321),
+    // 定时模式定位策略
+    KEY_TIME_MODE_POS_STRATEGY(0x0330),
+    // 定时模式时间点
+    KEY_TIME_MODE_REPORT_TIME_POINT(0x0331),
+    // 运动开始事件信息开关
+    KEY_MOTION_MODE_START_ENABLE(0x0340),
+    // 运动开始定位开关
+    KEY_MOTION_MODE_START_FIX_ENABLE(0x0341),
+    // 运动开始定位策略
+    KEY_MOTION_MODE_START_POS_STRATEGY(0x0342),
+    // 运动开始定位上报次数
+    KEY_MOTION_MODE_START_NUMBER(0x0343),
+    // 运动中事件信息开关
+    KEY_MOTION_MODE_TRIP_ENABLE(0x0350),
+    // 运动中定位开关
+    KEY_MOTION_MODE_TRIP_FIX_ENABLE(0x0351),
+    // 运动中定位策略
+    KEY_MOTION_MODE_TRIP_POS_STRATEGY(0x0352),
+    // 运动中定位上报间隔
+    KEY_MOTION_MODE_TRIP_REPORT_INTERVAL(0x0353),
+    // 运动结束事件信息开关
+    KEY_MOTION_MODE_END_ENABLE(0x0360),
+    // 运动结束定位开关
+    KEY_MOTION_MODE_END_FIX_ENABLE(0x0361),
+    // 运动结束定位策略
+    KEY_MOTION_MODE_END_POS_STRATEGY(0x0362),
+    // 运动结束定位上报间隔
+    KEY_MOTION_MODE_END_REPORT_INTERVAL(0x0363),
+    // 运动结束定位次数
+    KEY_MOTION_MODE_END_NUMBER(0x0364),
+    // 运动结束判断时间
+    KEY_MOTION_MODE_END_TIMEOUT(0x0365),
+    // 静止定位开关
+    KEY_MOTION_MODE_STATIONARY_FIX_ENABLE(0x0370),
+    // 静止定位策略
+    KEY_MOTION_MODE_STATIONARY_POS_STRATEGY(0x0371),
+    // 静止上报间隔
+    KEY_MOTION_MODE_STATIONARY_REPORT_INTERVAL(0x0372),
+    // 定时定期模式定位策略
+    KEY_TIME_PERIODIC_MODE_POS_STRATEGY(0x0380),
+    // 定时定期模式时间段
+    KEY_TIME_PERIODIC_MODE_REPORT_TIME_POINT(0x0381),
 
     //// 蓝牙扫描过滤参数
     // PHY过滤规则
@@ -247,6 +309,8 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_BEACON_PAYLOAD(0x055C),
     //报警信息包上行配置
     KEY_ALARM_PAYLOAD(0x055E),
+    //蓝牙连接信息包上行配置
+    KEY_CONNECT_PAYLOAD(0x055F),
 
 
     ////其他应用功能
@@ -331,6 +395,14 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_PAYLOAD_OTHER_CONTENT(0x0770),
     // Unknown上报数据款
     KEY_PAYLOAD_OTHER_DATA_BLOCK(0x0771),
+
+    //// POS Params
+    // GPS极限上传模式（L76版本）
+    KEY_GPS_EXTREME_MODE_L76C(0x0801),
+    // GPS定位超时时间（L76版本）
+    KEY_GPS_POS_TIMEOUT_L76C(0x0830),
+    // GPS位置精度因子PDOP（L76版本）
+    KEY_GPS_PDOP_LIMIT_L76C(0x0831),
 
     //// 存储协议
     // 读取存储的数据

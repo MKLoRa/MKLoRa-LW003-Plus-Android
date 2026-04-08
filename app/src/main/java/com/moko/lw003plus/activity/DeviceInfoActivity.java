@@ -28,7 +28,9 @@ import com.moko.lw003plus.activity.device.IndicatorSettingsActivity;
 import com.moko.lw003plus.activity.device.OnOffSettingsActivity;
 import com.moko.lw003plus.activity.device.SystemInfoActivity;
 import com.moko.lw003plus.activity.filter.BluetoothFilterSettingsActivity;
+import com.moko.lw003plus.activity.general.AxisSettingActivity;
 import com.moko.lw003plus.activity.general.BleSettingsActivity;
+import com.moko.lw003plus.activity.general.GpsFixSettingsActivity;
 import com.moko.lw003plus.activity.general.THSettingsActivity;
 import com.moko.lw003plus.activity.lora.LoRaAppSettingActivity;
 import com.moko.lw003plus.activity.lora.LoRaConnSettingActivity;
@@ -622,15 +624,27 @@ public class DeviceInfoActivity extends BaseActivity implements RadioGroup.OnChe
     }
 
 
+    public void onGPSFix(View view) {
+        if (isWindowLocked()) return;
+        Intent intent = new Intent(this, GpsFixSettingsActivity.class);
+        startActivity(intent);
+    }
+
     public void onBleSettings(View view) {
         if (isWindowLocked()) return;
         Intent intent = new Intent(this, BleSettingsActivity.class);
         startActivity(intent);
     }
 
+
     public void onTHSettings(View view) {
         if (isWindowLocked()) return;
         Intent intent = new Intent(this, THSettingsActivity.class);
+        startActivity(intent);
+    }
+    public void onAxisSettings(View view) {
+        if (isWindowLocked()) return;
+        Intent intent = new Intent(this, AxisSettingActivity.class);
         startActivity(intent);
     }
 

@@ -1,4 +1,4 @@
-package com.moko.lw003plus.activity.strategies;
+package com.moko.lw003plus.activity.general;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -9,8 +9,11 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.view.View;
+
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.moko.ble.lib.MokoConstants;
@@ -19,11 +22,12 @@ import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
+import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.R;
 import com.moko.lw003plus.activity.BaseActivity;
 import com.moko.lw003plus.adapter.TimePointAdapter;
-import com.moko.lw003plus.databinding.Lw003PlusActivityPeriodicScanTimingReportBinding;
-import com.moko.lib.loraui.dialog.BottomDialog;
+import com.moko.lw003plus.databinding.Lw003PlusActivityGpsFixTimingReportBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityScanAlwaysTimingReportBinding;
 import com.moko.lw003plus.entity.TimePoint;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
@@ -39,13 +43,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+public class GpsFixTimingReportActivity extends BaseActivity implements BaseQuickAdapter.OnItemChildClickListener {
 
-public class PeriodicScanTimingReportActivity extends BaseActivity implements BaseQuickAdapter.OnItemChildClickListener {
-
-    private Lw003PlusActivityPeriodicScanTimingReportBinding mBind;
+    private Lw003PlusActivityGpsFixTimingReportBinding mBind;
     private boolean mReceiverTag = false;
     private boolean savedParamsError;
     private ArrayList<TimePoint> mTimePoints;
@@ -58,15 +58,15 @@ public class PeriodicScanTimingReportActivity extends BaseActivity implements Ba
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003PlusActivityPeriodicScanTimingReportBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityGpsFixTimingReportBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         mHourValues = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             mHourValues.add(String.format("%02d", i));
         }
         mMinValues = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            mMinValues.add(String.format("%02d", i * 10));
+        for (int i = 0; i < 60; i++) {
+            mMinValues.add(String.format("%02d", i));
         }
         mTimePoints = new ArrayList<>();
         mAdapter = new TimePointAdapter(mTimePoints);
@@ -89,10 +89,9 @@ public class PeriodicScanTimingReportActivity extends BaseActivity implements Ba
         registerReceiver(mReceiver, filter);
         mReceiverTag = true;
         showSyncingProgressDialog();
-        mBind.etScanDuration.postDelayed(() -> {
+        mBind.ivTimePointAdd.postDelayed(() -> {
             List<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.getPeriodicScanTimingReportParams());
-            orderTasks.add(OrderTaskAssembler.getPeriodicScanTimingReportReportTimePoint());
+            orderTasks.add(OrderTaskAssembler.getTimePosReportPoints());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
         mHandler.postDelayed(() -> {
@@ -183,10 +182,7 @@ public class PeriodicScanTimingReportActivity extends BaseActivity implements Ba
                                             LoRaLW003PlusMokoSupport.getInstance().sendOrder(OrderTaskAssembler.setTime());
                                         }, 150 * 1000);
                                         break;
-                                    case KEY_PERIODIC_SCAN_TIMING_REPORT_PARAMS:
-                                        savedParamsError |= result != 1;
-                                        break;
-                                    case KEY_PERIODIC_SCAN_TIMING_REPORT_REPORT_TIME_POINT:
+                                    case KEY_TIME_MODE_REPORT_TIME_POINT:
                                         savedParamsError |= result != 1;
                                         if (savedParamsError) {
                                             ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
@@ -199,23 +195,16 @@ public class PeriodicScanTimingReportActivity extends BaseActivity implements Ba
                             if (flag == 0x00) {
                                 // read
                                 switch (configKeyEnum) {
-                                    case KEY_PERIODIC_SCAN_TIMING_REPORT_PARAMS:
+                                    case KEY_TIME_MODE_REPORT_TIME_POINT:
                                         if (length > 0) {
-                                            int duration = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 7));
-                                            int interval = MokoUtils.toInt(Arrays.copyOfRange(value, 7, 9));
-                                            mBind.etScanDuration.setText(String.valueOf(duration));
-                                            mBind.etScanInterval.setText(String.valueOf(interval));
-                                        }
-                                        break;
-                                    case KEY_PERIODIC_SCAN_TIMING_REPORT_REPORT_TIME_POINT:
-                                        if (length > 0) {
-                                            for (int i = 0; i < length; i++) {
-                                                int point = value[5 + i] & 0xFF;
-                                                int min = point * 10;
-                                                int hour = min / 60;
-                                                min = min % 60;
+                                            byte[] rawBytes = Arrays.copyOfRange(value, 5, 5 + length);
+                                            for (int i = 0; i < length; i += 2) {
+                                                int index = i / 2;
+                                                int point = MokoUtils.toInt(Arrays.copyOfRange(rawBytes, i, i + 2));
+                                                int hour = point / 60;
+                                                int min = point % 60;
                                                 TimePoint timePoint = new TimePoint();
-                                                timePoint.name = String.format("Time Point %d", i + 1);
+                                                timePoint.name = String.format("Time Point %d", index + 1);
                                                 if (hour == 24) {
                                                     timePoint.hour = String.format("%02d", 0);
                                                 } else {
@@ -301,7 +290,7 @@ public class PeriodicScanTimingReportActivity extends BaseActivity implements Ba
             dialog.show(getSupportFragmentManager());
         }
         if (view.getId() == R.id.tv_point_min) {
-            int select = Integer.parseInt(timePoint.min) / 10;
+            int select = Integer.parseInt(timePoint.min);
             BottomDialog dialog = new BottomDialog();
             dialog.setDatas(mMinValues, select);
             dialog.setListener(value -> {
@@ -316,8 +305,8 @@ public class PeriodicScanTimingReportActivity extends BaseActivity implements Ba
         if (isWindowLocked())
             return;
         int size = mTimePoints.size();
-        if (size >= 24) {
-            ToastUtils.showToast(this, "You can set up to 24 time points!");
+        if (size >= 10) {
+            ToastUtils.showToast(this, "You can set up to 10 time points!");
             return;
         }
         TimePoint timePoint = new TimePoint();
@@ -330,40 +319,19 @@ public class PeriodicScanTimingReportActivity extends BaseActivity implements Ba
 
     public void onSave(View view) {
         savedParamsError = false;
-        final String durationStr = mBind.etScanDuration.getText().toString();
-        final String intervalStr = mBind.etScanInterval.getText().toString();
-        if (TextUtils.isEmpty(durationStr) || TextUtils.isEmpty(intervalStr)) {
-            ToastUtils.showToast(this, "Para error!");
-            return;
-        }
-        final int duration = Integer.parseInt(durationStr);
-        if (duration < 3 || duration > 65535) {
-            ToastUtils.showToast(this, "Para error!");
-            return;
-        }
-        final int interval = Integer.parseInt(intervalStr);
-        if (interval < 3 || interval > 65535) {
-            ToastUtils.showToast(this, "Para error!");
-            return;
-        }
-        if (interval < duration) {
-            ToastUtils.showToast(this, "Bluetooth scan interval shouldn't be less than Bluetooth scan duration");
-            return;
-        }
         showSyncingProgressDialog();
         List<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setPeriodicScanTimingReportDuration(duration, interval));
         ArrayList<Integer> points = new ArrayList<>();
         for (TimePoint point : mTimePoints) {
             int hour = Integer.parseInt(point.hour);
             int min = Integer.parseInt(point.min);
             if (hour == 0 && min == 0) {
-                points.add(144);
+                points.add(1440);
                 continue;
             }
-            points.add((hour * 60 + min) / 10);
+            points.add(hour * 60 + min);
         }
-        orderTasks.add(OrderTaskAssembler.setPeriodicScanTimingReportTimePoint(points));
+        orderTasks.add(OrderTaskAssembler.setTimePosReportPoints(points));
         LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         if (mHandler.hasMessages(0))
             mHandler.removeMessages(0);

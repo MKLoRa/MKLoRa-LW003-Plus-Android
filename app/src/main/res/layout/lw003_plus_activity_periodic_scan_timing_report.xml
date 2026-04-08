@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/grey_f2f2f2"
     android:orientation="vertical">
 
@@ -190,13 +190,14 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_time_point"
-            tools:listitem="@layout/item_time_point"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_time_point_add" />
+            app:layout_constraintTop_toBottomOf="@id/iv_time_point_add"
+            tools:itemCount="3"
+            tools:listitem="@layout/lw003_plus_item_time_point" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

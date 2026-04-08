@@ -9,7 +9,9 @@
     <string name="application_setting">Application Settings</string>
     <string name="general_heartbeat_interval">Heartbeat Interval</string>
     <string name="lw003_v3_general_ble_settings">Bluetooth Broadcast Settings</string>
+    <string name="general_gps_fix">GPS Fix Function Settings</string>
     <string name="general_th_settings"><![CDATA[T&H Settings]]></string>
+    <string name="general_axis_setting">3-Axis Settings</string>
     <string name="general_on_off_settings">ON/OFF Settings</string>
     <string name="general_continuity_transfer_function">Continuity Transfer Function</string>
     <string name="general_continuity_transfer_function_tips">*When the device encounters network disconnection or power failure, whether continue to transfer the data that hadn\'t been uploaded before when it is connected to the network or powered up again</string>

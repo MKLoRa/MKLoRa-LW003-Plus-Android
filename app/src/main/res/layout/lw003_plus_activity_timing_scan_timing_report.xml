@@ -139,7 +139,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_scan_time_point_add"
-            tools:listitem="@layout/item_time_point" />
+            tools:itemCount="3"
+            tools:listitem="@layout/lw003_plus_item_time_point" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -181,7 +182,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_report_time_point_add"
-            tools:listitem="@layout/item_time_point" />
+            tools:itemCount="3"
+            tools:listitem="@layout/lw003_plus_item_time_point" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

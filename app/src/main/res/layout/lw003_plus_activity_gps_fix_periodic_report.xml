@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_f2f2f2"
@@ -31,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/scan_always_timing_report"
+            android:text="Periodic Report Settings"
             android:textColor="@color/white_ffffff"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -50,44 +49,54 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_weight="1.0"
+        android:layout_marginTop="10dp"
         android:background="@color/white_ffffff"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:padding="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Report Time Point"
+            android:text="Report Interval"
             android:textColor="@color/black_333333"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/iv_time_point_add"
+            app:layout_constraintBottom_toBottomOf="@id/et_report_interval"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@id/iv_time_point_add" />
+            app:layout_constraintTop_toTopOf="@id/et_report_interval" />
 
-        <ImageView
-            android:id="@+id/iv_time_point_add"
+        <EditText
+            android:id="@+id/et_report_interval"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="30~86400"
+            android:inputType="number"
+            android:maxLength="5"
+            android:text=""
+            android:textColor="@color/black_333333"
+            android:textColorHint="@color/grey_ebebeb"
+            android:textSize="15sp"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.35" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:onClick="onTimePointAdd"
-            android:padding="12dp"
-            android:src="@drawable/ic_add"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_time_point"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_time_point_add"
-            tools:itemCount="3"
-            tools:listitem="@layout/lw003_plus_item_time_point" />
-
+            android:text="s"
+            android:textColor="@color/black_333333"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/et_report_interval"
+            app:layout_constraintLeft_toRightOf="@id/et_report_interval"
+            app:layout_constraintTop_toTopOf="@id/et_report_interval" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </LinearLayout>

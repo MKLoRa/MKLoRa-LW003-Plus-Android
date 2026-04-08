@@ -107,7 +107,7 @@
             android:button="@null"
             android:checked="false"
             android:drawableRight="@drawable/selector_cb_btn"
-            android:text="OFF By Button"
+            android:text="OFF By Magnet"
             android:textColor="@color/black_333333"
             android:textSize="15sp"
             android:textStyle="bold"

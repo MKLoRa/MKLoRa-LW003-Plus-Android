@@ -1,4 +1,4 @@
-package com.moko.lw003plus.activity.lora;
+package com.moko.lw003plus.activity.general;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -17,7 +17,8 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003PlusActivityAppSettingBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityGpsFixPeriodicReportBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityScanAlwaysPeriodicReportBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -32,17 +33,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoRaAppSettingActivity extends BaseActivity {
+public class GpsFixPeriodicReportActivity extends BaseActivity {
 
-    private Lw003PlusActivityAppSettingBinding mBind;
-
+    private Lw003PlusActivityGpsFixPeriodicReportBinding mBind;
     private boolean mReceiverTag = false;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003PlusActivityAppSettingBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityGpsFixPeriodicReportBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
         // 注册广播接收器
@@ -51,15 +51,15 @@ public class LoRaAppSettingActivity extends BaseActivity {
         registerReceiver(mReceiver, filter);
         mReceiverTag = true;
         showSyncingProgressDialog();
-        mBind.etSyncInterval.postDelayed(() -> {
+        mBind.etReportInterval.postDelayed(() -> {
             List<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.getLoraTimeSyncInterval());
-            orderTasks.add(OrderTaskAssembler.getLoraNetworkCheckInterval());
+            orderTasks.add(OrderTaskAssembler.getPeriodicReportInterval());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING, priority = 200)
+
+    @Subscribe(threadMode = ThreadMode.POSTING, priority = 300)
     public void onConnectStatusEvent(ConnectStatusEvent event) {
         final String action = event.getAction();
         runOnUiThread(() -> {
@@ -69,7 +69,7 @@ public class LoRaAppSettingActivity extends BaseActivity {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.POSTING, priority = 200)
+    @Subscribe(threadMode = ThreadMode.POSTING, priority = 300)
     public void onOrderTaskResponseEvent(OrderTaskResponseEvent event) {
         final String action = event.getAction();
         if (!MokoConstants.ACTION_CURRENT_DATA.equals(action))
@@ -102,13 +102,10 @@ public class LoRaAppSettingActivity extends BaseActivity {
                                 // write
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
-                                    case KEY_LORA_TIME_SYNC_INTERVAL:
-                                        savedParamsError |= result != 1;
-                                        break;
-                                    case KEY_LORA_NETWORK_CHECK_INTERVAL:
+                                    case KEY_PERIODIC_MODE_REPORT_INTERVAL:
                                         savedParamsError |= result != 1;
                                         if (savedParamsError) {
-                                            ToastUtils.showToast(LoRaAppSettingActivity.this, "Opps！Save failed. Please check the input characters and try again.");
+                                            ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
                                             ToastUtils.showToast(this, "Save Successfully！");
                                         }
@@ -118,18 +115,13 @@ public class LoRaAppSettingActivity extends BaseActivity {
                             if (flag == 0x00) {
                                 // read
                                 switch (configKeyEnum) {
-                                    case KEY_LORA_TIME_SYNC_INTERVAL:
+                                    case KEY_PERIODIC_MODE_REPORT_INTERVAL:
                                         if (length > 0) {
-                                            int interval = value[5] & 0xFF;
-                                            mBind.etSyncInterval.setText(String.valueOf(interval));
+                                            int interval = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
+                                            mBind.etReportInterval.setText(String.valueOf(interval));
                                         }
                                         break;
-                                    case KEY_LORA_NETWORK_CHECK_INTERVAL:
-                                        if (length > 0) {
-                                            int interval = value[5] & 0xFF;
-                                            mBind.etNetworkCheckInterval.setText(String.valueOf(interval));
-                                        }
-                                        break;
+
                                 }
                             }
                         }
@@ -137,59 +129,6 @@ public class LoRaAppSettingActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-    public void onSave(View view) {
-        if (isWindowLocked())
-            return;
-        if (isValid()) {
-            showSyncingProgressDialog();
-            saveParams();
-        } else {
-            ToastUtils.showToast(this, "Para error!");
-        }
-    }
-
-    public void onMulticastGroup(View view) {
-        if (isWindowLocked()) return;
-        startActivity(new Intent(this, MulticastGroupActivity.class));
-    }
-
-    public void onMessageTypeSettings(View view) {
-        if (isWindowLocked()) return;
-        startActivity(new Intent(this, MessageTypeActivity.class));
-    }
-
-    private boolean isValid() {
-        final String syncIntervalStr = mBind.etSyncInterval.getText().toString();
-        if (TextUtils.isEmpty(syncIntervalStr))
-            return false;
-        final int syncInterval = Integer.parseInt(syncIntervalStr);
-        if (syncInterval > 255) {
-            return false;
-        }
-        final String networkCheckIntervalStr = mBind.etNetworkCheckInterval.getText().toString();
-        if (TextUtils.isEmpty(networkCheckIntervalStr))
-            return false;
-        final int networkCheckInterval = Integer.parseInt(networkCheckIntervalStr);
-        if (networkCheckInterval > 255) {
-            return false;
-        }
-        return true;
-
-    }
-
-
-    private void saveParams() {
-        final String syncIntervalStr = mBind.etSyncInterval.getText().toString();
-        final String networkCheckIntervalStr = mBind.etNetworkCheckInterval.getText().toString();
-        final int syncInterval = Integer.parseInt(syncIntervalStr);
-        final int networkCheckInterval = Integer.parseInt(networkCheckIntervalStr);
-        savedParamsError = false;
-        List<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setLoraTimeSyncInterval(syncInterval));
-        orderTasks.add(OrderTaskAssembler.setLoraNetworkInterval(networkCheckInterval));
-        LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 
 
@@ -235,6 +174,25 @@ public class LoRaAppSettingActivity extends BaseActivity {
     }
 
     private void backHome() {
+        setResult(RESULT_OK);
         finish();
+    }
+
+    public void onSave(View view) {
+        savedParamsError = false;
+        final String intervalStr = mBind.etReportInterval.getText().toString();
+        if (TextUtils.isEmpty(intervalStr)) {
+            ToastUtils.showToast(this, "Para error!");
+            return;
+        }
+        final int interval = Integer.parseInt(intervalStr);
+        if (interval < 30 || interval > 86400) {
+            ToastUtils.showToast(this, "Para error!");
+            return;
+        }
+        showSyncingProgressDialog();
+        List<OrderTask> orderTasks = new ArrayList<>();
+        orderTasks.add(OrderTaskAssembler.setPeriodicReportInterval(interval));
+        LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 }

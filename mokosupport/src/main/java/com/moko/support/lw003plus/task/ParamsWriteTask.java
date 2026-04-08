@@ -135,6 +135,7 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) enable
         };
     }
+
     public void setOffByButton(@IntRange(from = 0, to = 1) int enable) {
         byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_OFF_BY_BUTTON.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
@@ -341,6 +342,432 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) interval
         };
 
+    }
+
+    public void setDeviceMode(@IntRange(from = 0, to = 4) int mode) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_DEVICE_MODE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) mode
+        };
+
+    }
+
+
+
+    public void setGPSPosTimeoutL76(@IntRange(from = 30, to = 600) int timeout) {
+        byte[] timeoutBytes = MokoUtils.toByteArray(timeout, 2);
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_GPS_POS_TIMEOUT_L76C.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                timeoutBytes[0],
+                timeoutBytes[1]
+        };
+
+    }
+
+
+    public void setGPSPDOPLimitL76(@IntRange(from = 5, to = 100) int limit) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_GPS_PDOP_LIMIT_L76C.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) limit,
+        };
+
+    }
+
+    public void setGPSExtremeModeL76(@IntRange(from = 0, to = 1) int limit) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_GPS_EXTREME_MODE_L76C.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) limit,
+        };
+
+    }
+
+    public void setStandbyPosStrategy(@IntRange(from = 0, to = 3) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_STANDBY_MODE_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+    public void setPeriodicPosStrategy(@IntRange(from = 0, to = 4) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_PERIODIC_MODE_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+
+    public void setPeriodicReportInterval(@IntRange(from = 30, to = 86400) int interval) {
+        byte[] intervalBytes = MokoUtils.toByteArray(interval, 4);
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_PERIODIC_MODE_REPORT_INTERVAL.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x04,
+                intervalBytes[0],
+                intervalBytes[1],
+                intervalBytes[2],
+                intervalBytes[3]
+        };
+
+    }
+
+
+    public void setTimePosStrategy(@IntRange(from = 0, to = 3) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_TIME_MODE_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+    public void setTimePosReportPoints(ArrayList<Integer> timePoints) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_TIME_MODE_REPORT_TIME_POINT.getParamsKey(), 2);
+        if (timePoints == null || timePoints.size() == 0) {
+            data = new byte[]{
+                    (byte) 0xED,
+                    (byte) 0x01,
+                    (byte) cmdBytes[0],
+                    (byte) cmdBytes[1],
+                    (byte) 0x00
+            };
+        } else {
+            int size = timePoints.size();
+            int length = size * 2;
+            data = new byte[5 + length];
+            data[0] = (byte) 0xED;
+            data[1] = (byte) 0x01;
+            data[2] = cmdBytes[0];
+            data[3] = cmdBytes[1];
+            data[4] = (byte) length;
+            for (int i = 0, index = 0; i < length && index < size; i += 2, index++) {
+                byte[] pointBytes = MokoUtils.toByteArray(timePoints.get(index), 2);
+                data[5 + i] = pointBytes[0];
+                data[6 + i] = pointBytes[1];
+            }
+        }
+        response.responseValue = data;
+    }
+
+    public void setMotionStartEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_START_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+
+    }
+
+    public void setMotionStartFixEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_START_FIX_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+
+    }
+
+    public void setMotionStartNumber(@IntRange(from = 1, to = 255) int number) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_START_NUMBER.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) number
+        };
+
+    }
+
+    public void setMotionStartPosStrategy(@IntRange(from = 0, to = 3) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_START_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+    public void setMotionTripEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_TRIP_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+
+    }
+
+    public void setMotionTripFixEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_TRIP_FIX_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+
+    }
+
+
+    public void setMotionTripInterval(@IntRange(from = 10, to = 86400) int interval) {
+        byte[] intervalBytes = MokoUtils.toByteArray(interval, 4);
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_TRIP_REPORT_INTERVAL.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x04,
+                intervalBytes[0],
+                intervalBytes[1],
+                intervalBytes[2],
+                intervalBytes[3],
+        };
+
+    }
+
+    public void setMotionTripPosStrategy(@IntRange(from = 0, to = 4) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_TRIP_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+    public void setMotionEndEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_END_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+
+    }
+
+    public void setMotionEndFixEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_END_FIX_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+
+    }
+
+    public void setMotionEndTimeout(@IntRange(from = 1, to = 180) int timeout) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_END_TIMEOUT.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) timeout
+        };
+
+    }
+
+
+    public void setMotionEndNumber(@IntRange(from = 1, to = 255) int number) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_END_NUMBER.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) number
+        };
+
+    }
+
+
+    public void setMotionEndInterval(@IntRange(from = 10, to = 300) int interval) {
+        byte[] intervalBytes = MokoUtils.toByteArray(interval, 2);
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_END_REPORT_INTERVAL.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                intervalBytes[0],
+                intervalBytes[1],
+        };
+
+    }
+
+    public void setMotionEndPosStrategy(@IntRange(from = 0, to = 4) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_END_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+    public void setMotionStationaryFixEnable(@IntRange(from = 0, to = 1) int enable) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_STATIONARY_FIX_ENABLE.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) enable
+        };
+
+    }
+
+    public void setMotionStationaryInterval(@IntRange(from = 1, to = 14400) int interval) {
+        byte[] intervalBytes = MokoUtils.toByteArray(interval, 2);
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_STATIONARY_REPORT_INTERVAL.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                intervalBytes[0],
+                intervalBytes[1]
+        };
+
+    }
+
+    public void setMotionStationaryPosStrategy(@IntRange(from = 0, to = 3) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_MOTION_MODE_STATIONARY_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+
+    public void setTimePeriodicPosStrategy(@IntRange(from = 0, to = 4) int strategy) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_TIME_PERIODIC_MODE_POS_STRATEGY.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) strategy
+        };
+
+    }
+
+    public void setTimePeriodicPosReportPoints(ArrayList<Integer> timePoints) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_TIME_PERIODIC_MODE_REPORT_TIME_POINT.getParamsKey(), 2);
+        if (timePoints.size() == 0) {
+            data = new byte[5];
+            data[0] = (byte) 0xED;
+            data[1] = (byte) 0x01;
+            data[2] = cmdBytes[0];
+            data[3] = cmdBytes[1];
+            data[4] = (byte) 0;
+        } else {
+            int size = timePoints.size();
+            int length = size / 3 * 8;
+            data = new byte[5 + length];
+            data[0] = (byte) 0xED;
+            data[1] = (byte) 0x01;
+            data[2] = cmdBytes[0];
+            data[3] = cmdBytes[1];
+            data[4] = (byte) length;
+            for (int i = 0, j = 0; i < size; i++) {
+                if ((i + 1) % 3 != 0) {
+                    byte[] intervalBytes = MokoUtils.toByteArray(timePoints.get(i), 2);
+                    data[5 + j * 2] = intervalBytes[0];
+                    data[6 + j * 2] = intervalBytes[1];
+                    j++;
+                } else {
+                    byte[] intervalBytes = MokoUtils.toByteArray(timePoints.get(i), 4);
+                    data[5 + j * 2] = intervalBytes[0];
+                    data[6 + j * 2] = intervalBytes[1];
+                    data[7 + j * 2] = intervalBytes[2];
+                    data[8 + j * 2] = intervalBytes[3];
+                    j += 2;
+                }
+            }
+        }
+        response.responseValue = data;
     }
 
     public void setFilterDuplicateData(@IntRange(from = 0, to = 3) int type) {
@@ -1552,6 +1979,18 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) times,
         };
     }
+    public void setConnectPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CONNECT_PAYLOAD.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                (byte) enable,
+                (byte) times,
+        };
+    }
 
     public void setLowPowerPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
         byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_LOW_POWER_PAYLOAD.getParamsKey(), 2);
@@ -1565,6 +2004,7 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) times,
         };
     }
+
     public void setPosPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
         byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_POS_PAYLOAD.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
@@ -1577,6 +2017,7 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) times,
         };
     }
+
     public void setGpsPayloadSettings(@IntRange(from = 0, to = 1) int enable, @IntRange(from = 1, to = 4) int times) {
         byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_GPS_PAYLOAD.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
@@ -2195,8 +2636,8 @@ public class ParamsWriteTask extends OrderTask {
         };
     }
 
-    public void setLowPowerVoltageThreshold(@IntRange(from = 44, to = 64) int threshold) {
-        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_LOW_POWER_VOLTAGE_THRESHOLD.getParamsKey(), 2);
+    public void setCondition1VoltageThreshold(@IntRange(from = 44, to = 64) int threshold) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CONDITION_1_VOLTAGE_THRESHOLD.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
                 (byte) 0xED,
                 (byte) 0x01,
@@ -2207,9 +2648,9 @@ public class ParamsWriteTask extends OrderTask {
         };
     }
 
-    public void setLowPowerMinSampleInterval(@IntRange(from = 1, to = 1440) int interval) {
+    public void setCondition1MinSampleInterval(@IntRange(from = 1, to = 1440) int interval) {
         byte[] rawDataBytes = MokoUtils.toByteArray(interval, 2);
-        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_LOW_POWER_MIN_SAMPLE_INTERVAL.getParamsKey(), 2);
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CONDITION_1_MIN_SAMPLE_INTERVAL.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
                 (byte) 0xED,
                 (byte) 0x01,
@@ -2221,8 +2662,46 @@ public class ParamsWriteTask extends OrderTask {
         };
     }
 
-    public void setLowPowerSampleTimes(@IntRange(from = 1, to = 100) int times) {
-        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_LOW_POWER_SAMPLE_TIMES.getParamsKey(), 2);
+    public void setCondition1SampleTimes(@IntRange(from = 1, to = 100) int times) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CONDITION_1_SAMPLE_TIMES.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) times
+        };
+    }
+
+    public void setCondition2VoltageThreshold(@IntRange(from = 44, to = 64) int threshold) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CONDITION_2_VOLTAGE_THRESHOLD.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x01,
+                (byte) threshold
+        };
+    }
+
+    public void setCondition2MinSampleInterval(@IntRange(from = 1, to = 1440) int interval) {
+        byte[] rawDataBytes = MokoUtils.toByteArray(interval, 2);
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CONDITION_2_MIN_SAMPLE_INTERVAL.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                (byte) rawDataBytes[0],
+                (byte) rawDataBytes[1]
+        };
+    }
+
+    public void setCondition2SampleTimes(@IntRange(from = 1, to = 100) int times) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_CONDITION_2_SAMPLE_TIMES.getParamsKey(), 2);
         response.responseValue = data = new byte[]{
                 (byte) 0xED,
                 (byte) 0x01,
@@ -2243,6 +2722,36 @@ public class ParamsWriteTask extends OrderTask {
                 (byte) 0x01,
                 (byte) enable
         };
+    }
+
+    public void setAccWakeupCondition(@IntRange(from = 1, to = 20) int threshold,
+                                      @IntRange(from = 1, to = 10) int duration) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_ACC_WAKEUP_CONDITION.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                (byte) threshold,
+                (byte) duration
+        };
+
+    }
+
+    public void setAccMotionCondition(@IntRange(from = 10, to = 250) int threshold,
+                                      @IntRange(from = 1, to = 50) int duration) {
+        byte[] cmdBytes = MokoUtils.toByteArray(ParamsKeyEnum.KEY_ACC_MOTION_CONDITION.getParamsKey(), 2);
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) cmdBytes[0],
+                (byte) cmdBytes[1],
+                (byte) 0x02,
+                (byte) threshold,
+                (byte) duration
+        };
+
     }
 
     public void setFilterNameRules(ArrayList<String> filterNameRules) {

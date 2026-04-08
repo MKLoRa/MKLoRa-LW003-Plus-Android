@@ -1,11 +1,7 @@
-package com.moko.lw003plus.activity.lora;
+package com.moko.lw003plus.activity.general;
 
 
-import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,8 +12,9 @@ import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
+import com.moko.lib.loraui.dialog.BottomDialog;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003PlusActivityAppSettingBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityGpsFixBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -32,29 +29,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoRaAppSettingActivity extends BaseActivity {
+public class GpsFixSettingsActivity extends BaseActivity {
 
-    private Lw003PlusActivityAppSettingBinding mBind;
 
-    private boolean mReceiverTag = false;
+    private Lw003PlusActivityGpsFixBinding mBind;
+
     private boolean savedParamsError;
+
+    private String[] mStragegyValue = {"No Report", "Periodic Report", "Timing Report", "Motion Report", "Report with BLE Payload"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003PlusActivityAppSettingBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityGpsFixBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
         EventBus.getDefault().register(this);
-        // 注册广播接收器
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mReceiver, filter);
-        mReceiverTag = true;
         showSyncingProgressDialog();
-        mBind.etSyncInterval.postDelayed(() -> {
+        mBind.etPdopLimit.postDelayed(() -> {
             List<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.getLoraTimeSyncInterval());
-            orderTasks.add(OrderTaskAssembler.getLoraNetworkCheckInterval());
+            orderTasks.add(OrderTaskAssembler.getDeviceMode());
+            orderTasks.add(OrderTaskAssembler.getGPSPosTimeoutL76());
+            orderTasks.add(OrderTaskAssembler.getGPSPDOPLimitL76());
+            orderTasks.add(OrderTaskAssembler.getGPSExtremeModeL76());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
@@ -102,13 +99,15 @@ public class LoRaAppSettingActivity extends BaseActivity {
                                 // write
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
-                                    case KEY_LORA_TIME_SYNC_INTERVAL:
+                                    case KEY_DEVICE_MODE:
+                                    case KEY_GPS_POS_TIMEOUT_L76C:
+                                    case KEY_GPS_PDOP_LIMIT_L76C:
                                         savedParamsError |= result != 1;
                                         break;
-                                    case KEY_LORA_NETWORK_CHECK_INTERVAL:
+                                    case KEY_GPS_EXTREME_MODE_L76C:
                                         savedParamsError |= result != 1;
                                         if (savedParamsError) {
-                                            ToastUtils.showToast(LoRaAppSettingActivity.this, "Opps！Save failed. Please check the input characters and try again.");
+                                            ToastUtils.showToast(GpsFixSettingsActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
                                             ToastUtils.showToast(this, "Save Successfully！");
                                         }
@@ -118,16 +117,30 @@ public class LoRaAppSettingActivity extends BaseActivity {
                             if (flag == 0x00) {
                                 // read
                                 switch (configKeyEnum) {
-                                    case KEY_LORA_TIME_SYNC_INTERVAL:
+                                    case KEY_DEVICE_MODE:
                                         if (length > 0) {
-                                            int interval = value[5] & 0xFF;
-                                            mBind.etSyncInterval.setText(String.valueOf(interval));
+                                            int strategy = value[5] & 0xFF;
+                                            mBind.tvGPSFixStrategy.setTag(strategy);
+                                            mBind.tvGPSFixStrategy.setText(mStragegyValue[strategy]);
                                         }
                                         break;
-                                    case KEY_LORA_NETWORK_CHECK_INTERVAL:
+                                    case KEY_GPS_POS_TIMEOUT_L76C:
                                         if (length > 0) {
-                                            int interval = value[5] & 0xFF;
-                                            mBind.etNetworkCheckInterval.setText(String.valueOf(interval));
+                                            byte[] timeoutBytes = Arrays.copyOfRange(value, 5, 5 + length);
+                                            int timeout = MokoUtils.toInt(timeoutBytes);
+                                            mBind.etPositionTimeout.setText(String.valueOf(timeout));
+                                        }
+                                        break;
+                                    case KEY_GPS_PDOP_LIMIT_L76C:
+                                        if (length > 0) {
+                                            int limit = value[5] & 0xFF;
+                                            mBind.etPdopLimit.setText(String.valueOf(limit));
+                                        }
+                                        break;
+                                    case KEY_GPS_EXTREME_MODE_L76C:
+                                        if (length > 0) {
+                                            int enable = value[5] & 0xFF;
+                                            mBind.cbGPSExtremeMode.setChecked(enable == 1);
                                         }
                                         break;
                                 }
@@ -150,29 +163,19 @@ public class LoRaAppSettingActivity extends BaseActivity {
         }
     }
 
-    public void onMulticastGroup(View view) {
-        if (isWindowLocked()) return;
-        startActivity(new Intent(this, MulticastGroupActivity.class));
-    }
-
-    public void onMessageTypeSettings(View view) {
-        if (isWindowLocked()) return;
-        startActivity(new Intent(this, MessageTypeActivity.class));
-    }
-
     private boolean isValid() {
-        final String syncIntervalStr = mBind.etSyncInterval.getText().toString();
-        if (TextUtils.isEmpty(syncIntervalStr))
+        final String posTimeoutStr = mBind.etPositionTimeout.getText().toString();
+        if (TextUtils.isEmpty(posTimeoutStr))
             return false;
-        final int syncInterval = Integer.parseInt(syncIntervalStr);
-        if (syncInterval > 255) {
+        final int posTimeout = Integer.parseInt(posTimeoutStr);
+        if (posTimeout < 30 || posTimeout > 600) {
             return false;
         }
-        final String networkCheckIntervalStr = mBind.etNetworkCheckInterval.getText().toString();
-        if (TextUtils.isEmpty(networkCheckIntervalStr))
+        final String pdopLimitStr = mBind.etPdopLimit.getText().toString();
+        if (TextUtils.isEmpty(pdopLimitStr))
             return false;
-        final int networkCheckInterval = Integer.parseInt(networkCheckIntervalStr);
-        if (networkCheckInterval > 255) {
+        final int pdopLimit = Integer.parseInt(pdopLimitStr);
+        if (pdopLimit < 5 || pdopLimit > 100) {
             return false;
         }
         return true;
@@ -181,46 +184,23 @@ public class LoRaAppSettingActivity extends BaseActivity {
 
 
     private void saveParams() {
-        final String syncIntervalStr = mBind.etSyncInterval.getText().toString();
-        final String networkCheckIntervalStr = mBind.etNetworkCheckInterval.getText().toString();
-        final int syncInterval = Integer.parseInt(syncIntervalStr);
-        final int networkCheckInterval = Integer.parseInt(networkCheckIntervalStr);
+        int selected = (int) mBind.tvGPSFixStrategy.getTag();
+        final String posTimeoutStr = mBind.etPositionTimeout.getText().toString();
+        final int posTimeout = Integer.parseInt(posTimeoutStr);
+        final String pdopLimitStr = mBind.etPdopLimit.getText().toString();
+        final int pdopLimit = Integer.parseInt(pdopLimitStr);
         savedParamsError = false;
         List<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setLoraTimeSyncInterval(syncInterval));
-        orderTasks.add(OrderTaskAssembler.setLoraNetworkInterval(networkCheckInterval));
+        orderTasks.add(OrderTaskAssembler.setDeviceMode(selected));
+        orderTasks.add(OrderTaskAssembler.setGPSPosTimeoutL76C(posTimeout));
+        orderTasks.add(OrderTaskAssembler.setGPSPDOPLimitL76C(pdopLimit));
+        orderTasks.add(OrderTaskAssembler.setGPSExtremeModeL76C(mBind.cbGPSExtremeMode.isChecked() ? 1 : 0));
         LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
-
-
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (intent != null) {
-                String action = intent.getAction();
-                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
-                    int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-                    switch (blueState) {
-                        case BluetoothAdapter.STATE_TURNING_OFF:
-                            dismissSyncProgressDialog();
-                            finish();
-                            break;
-                    }
-                }
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mReceiverTag) {
-            mReceiverTag = false;
-            // 注销广播
-            unregisterReceiver(mReceiver);
-        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -235,6 +215,35 @@ public class LoRaAppSettingActivity extends BaseActivity {
     }
 
     private void backHome() {
+        setResult(RESULT_OK);
         finish();
+    }
+
+    public void selectGpsFixStrategies(View view) {
+        if (isWindowLocked())
+            return;
+        int selected = (int) view.getTag();
+        BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(new ArrayList<>(Arrays.asList(mStragegyValue)), selected);
+        dialog.setListener(value -> {
+            mBind.tvGPSFixStrategy.setTag(value);
+            mBind.tvGPSFixStrategy.setText(mStragegyValue[value]);
+        });
+        dialog.show(getSupportFragmentManager());
+    }
+
+    public void onPeriodicReportSettings(View view) {
+        if (isWindowLocked()) return;
+        startActivity(new Intent(this, GpsFixPeriodicReportActivity.class));
+    }
+
+    public void onTimingReportSettings(View view) {
+        if (isWindowLocked()) return;
+        startActivity(new Intent(this, GpsFixTimingReportActivity.class));
+    }
+
+    public void onMotionReportSettings(View view) {
+        if (isWindowLocked()) return;
+        startActivity(new Intent(this, GpsFixMotionReportActivity.class));
     }
 }

@@ -58,6 +58,7 @@ public class MessageTypeActivity extends BaseActivity {
             orderTasks.add(OrderTaskAssembler.getPosPayloadSettings());
             orderTasks.add(OrderTaskAssembler.getGPSPayloadSettings());
             orderTasks.add(OrderTaskAssembler.getAlarmPayloadSettings());
+//            orderTasks.add(OrderTaskAssembler.getConnectPayloadSettings());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
@@ -110,6 +111,7 @@ public class MessageTypeActivity extends BaseActivity {
                                     case KEY_EVENT_PAYLOAD:
                                     case KEY_DEVICE_INFO_PAYLOAD:
                                     case KEY_ALARM_PAYLOAD:
+//                                    case KEY_CONNECT_PAYLOAD:
                                     case KEY_LOW_POWER_PAYLOAD:
                                     case KEY_POS_PAYLOAD:
                                     case KEY_GPS_PAYLOAD:
@@ -183,6 +185,17 @@ public class MessageTypeActivity extends BaseActivity {
                                             mBind.clAlarmPayloadTimes.setVisibility(type == 0 ? View.GONE : View.VISIBLE);
                                         }
                                         break;
+//                                    case KEY_CONNECT_PAYLOAD:
+//                                        if (length > 0) {
+//                                            int type = value[5];
+//                                            int times = value[6] - 1;
+//                                            mBind.tvConnectPayloadType.setTag(type);
+//                                            mBind.tvConnectPayloadType.setText(mMessagePayloadList.get(type));
+//                                            mBind.tvConnectPayloadTimes.setTag(times);
+//                                            mBind.tvConnectPayloadTimes.setText(mMaxRetransmissionTimesList.get(times));
+//                                            mBind.clConnectPayloadTimes.setVisibility(type == 0 ? View.GONE : View.VISIBLE);
+//                                        }
+//                                        break;
                                     case KEY_LOW_POWER_PAYLOAD:
                                         if (length > 0) {
                                             int type = value[5];
@@ -241,6 +254,11 @@ public class MessageTypeActivity extends BaseActivity {
         int beaconTimes = (int) mBind.tvBeaconPayloadTimes.getTag();
         int alarmType = (int) mBind.tvAlarmPayloadType.getTag();
         int alarmTimes = (int) mBind.tvAlarmPayloadTimes.getTag();
+//        if (mBind.tvConnectPayloadType.getTag() != null) {
+//            int connectType = (int) mBind.tvConnectPayloadType.getTag();
+//            int connectTimes = (int) mBind.tvConnectPayloadTimes.getTag();
+//            orderTasks.add(OrderTaskAssembler.setConnectPayloadSettings(connectType, connectTimes + 1));
+//        }
         int deviceInfoType = (int) mBind.tvDeviceInfoPayloadType.getTag();
         int deviceInfoTimes = (int) mBind.tvDeviceInfoPayloadTimes.getTag();
         int eventType = (int) mBind.tvEventPayloadType.getTag();
@@ -415,6 +433,32 @@ public class MessageTypeActivity extends BaseActivity {
         });
         bottomDialog.show(getSupportFragmentManager());
     }
+
+//    public void selectConnectPayloadType(View view) {
+//        if (isWindowLocked()) return;
+//        int selected = (int) view.getTag();
+//        BottomDialog bottomDialog = new BottomDialog();
+//        bottomDialog.setDatas(mMessagePayloadList, selected);
+//        bottomDialog.setListener(value -> {
+//            mBind.tvConnectPayloadType.setTag(value);
+//            mBind.tvConnectPayloadType.setText(mMessagePayloadList.get(value));
+//            mBind.clConnectPayloadTimes.setVisibility(value == 0 ? View.GONE : View.VISIBLE);
+//        });
+//        bottomDialog.show(getSupportFragmentManager());
+//
+//    }
+
+//    public void selectConnectPayloadTimes(View view) {
+//        if (isWindowLocked()) return;
+//        int selected = (int) view.getTag();
+//        BottomDialog bottomDialog = new BottomDialog();
+//        bottomDialog.setDatas(mMaxRetransmissionTimesList, selected);
+//        bottomDialog.setListener(value -> {
+//            mBind.tvConnectPayloadTimes.setTag(value);
+//            mBind.tvConnectPayloadTimes.setText(mMaxRetransmissionTimesList.get(value));
+//        });
+//        bottomDialog.show(getSupportFragmentManager());
+//    }
 
     public void selectLowPowerPayloadType(View view) {
         if (isWindowLocked()) return;

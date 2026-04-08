@@ -45,7 +45,10 @@ public class SelfTestActivity extends BaseActivity {
         for (int i = 44; i <= 64; i++) {
             mValues.add(MokoUtils.getDecimalFormat("0.##").format(i * 0.05f));
         }
-        mBind.tvLowPowerVoltageThreshold.setOnClickListener(v -> {
+        mBind.tvCondition1VoltageThreshold.setOnClickListener(v -> {
+            showThresholdDialog(v);
+        });
+        mBind.tvCondition2VoltageThreshold.setOnClickListener(v -> {
             showThresholdDialog(v);
         });
         EventBus.getDefault().register(this);
@@ -54,9 +57,12 @@ public class SelfTestActivity extends BaseActivity {
             List<OrderTask> orderTasks = new ArrayList<>();
             orderTasks.add(OrderTaskAssembler.getSelfTestStatus());
             orderTasks.add(OrderTaskAssembler.getPCBAStatus());
-            orderTasks.add(OrderTaskAssembler.getLowPowerVoltageThreshold());
-            orderTasks.add(OrderTaskAssembler.getLowPowerMinSampleInterval());
-            orderTasks.add(OrderTaskAssembler.getLowPowerSampleTimes());
+            orderTasks.add(OrderTaskAssembler.getCondition1VoltageThreshold());
+            orderTasks.add(OrderTaskAssembler.getCondition1MinSampleInterval());
+            orderTasks.add(OrderTaskAssembler.getCondition1SampleTimes());
+            orderTasks.add(OrderTaskAssembler.getCondition2VoltageThreshold());
+            orderTasks.add(OrderTaskAssembler.getCondition2MinSampleInterval());
+            orderTasks.add(OrderTaskAssembler.getCondition2SampleTimes());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
@@ -104,15 +110,15 @@ public class SelfTestActivity extends BaseActivity {
                                 // write
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
-                                    case KEY_LOW_POWER_VOLTAGE_THRESHOLD:
-                                    case KEY_LOW_POWER_MIN_SAMPLE_INTERVAL:
-                                        if (result != 1)
-                                            savedParamsError = true;
+                                    case KEY_CONDITION_1_VOLTAGE_THRESHOLD:
+                                    case KEY_CONDITION_1_MIN_SAMPLE_INTERVAL:
+                                    case KEY_CONDITION_1_SAMPLE_TIMES:
+                                    case KEY_CONDITION_2_VOLTAGE_THRESHOLD:
+                                    case KEY_CONDITION_2_MIN_SAMPLE_INTERVAL:
+                                        savedParamsError |= result != 1;
                                         break;
-                                    case KEY_LOW_POWER_SAMPLE_TIMES:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                    case KEY_CONDITION_2_SAMPLE_TIMES:
+                                        savedParamsError |= result != 1;
                                         if (savedParamsError)
                                             com.moko.lib.loraui.utils.ToastUtils.showToast(this, "Opps！Save failed. Please check the input characters and try again.");
                                         else
@@ -131,6 +137,10 @@ public class SelfTestActivity extends BaseActivity {
                                                 mBind.tvFlashStatus.setVisibility(View.VISIBLE);
                                             if ((status & 0x02) == 0x02)
                                                 mBind.tvThStatus.setVisibility(View.VISIBLE);
+                                            if ((status & 0x04) == 0x04)
+                                                mBind.tvAxisStatus.setVisibility(View.VISIBLE);
+                                            if ((status & 0x08) == 0x08)
+                                                mBind.tvGpsStatus.setVisibility(View.VISIBLE);
                                         }
                                         break;
                                     case KEY_PCBA_STATUS:
@@ -138,19 +148,45 @@ public class SelfTestActivity extends BaseActivity {
                                             mBind.tvPcbaStatus.setText(String.valueOf(value[5] & 0xFF));
                                         }
                                         break;
-                                    case KEY_LOW_POWER_VOLTAGE_THRESHOLD:
-                                        int threshold = value[5] & 0xFF;
-                                        int selected = threshold - 44;
-                                        mBind.tvLowPowerVoltageThreshold.setText(mValues.get(selected));
-                                        mBind.tvLowPowerVoltageThreshold.setTag(selected);
+                                    case KEY_CONDITION_1_VOLTAGE_THRESHOLD:
+                                        if (length > 0) {
+                                            int threshold = value[5] & 0xFF;
+                                            int selected = threshold - 44;
+                                            mBind.tvCondition1VoltageThreshold.setText(mValues.get(selected));
+                                            mBind.tvCondition1VoltageThreshold.setTag(selected);
+                                        }
                                         break;
-                                    case KEY_LOW_POWER_MIN_SAMPLE_INTERVAL:
-                                        int interval = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
-                                        mBind.etLowPowerMinSampleInterval.setText(String.valueOf(interval));
+                                    case KEY_CONDITION_1_MIN_SAMPLE_INTERVAL:
+                                        if (length > 0) {
+                                            int interval = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
+                                            mBind.etCondition1MinSampleInterval.setText(String.valueOf(interval));
+                                        }
                                         break;
-                                    case KEY_LOW_POWER_SAMPLE_TIMES:
-                                        int times = value[5] & 0xFF;
-                                        mBind.etLowPowerSampleTimes.setText(String.valueOf(times));
+                                    case KEY_CONDITION_1_SAMPLE_TIMES:
+                                        if (length > 0) {
+                                            int times = value[5] & 0xFF;
+                                            mBind.etCondition1SampleTimes.setText(String.valueOf(times));
+                                        }
+                                        break;
+                                    case KEY_CONDITION_2_VOLTAGE_THRESHOLD:
+                                        if (length > 0) {
+                                            int threshold = value[5] & 0xFF;
+                                            int selected = threshold - 44;
+                                            mBind.tvCondition2VoltageThreshold.setText(mValues.get(selected));
+                                            mBind.tvCondition2VoltageThreshold.setTag(selected);
+                                        }
+                                        break;
+                                    case KEY_CONDITION_2_MIN_SAMPLE_INTERVAL:
+                                        if (length > 0) {
+                                            int interval = MokoUtils.toInt(Arrays.copyOfRange(value, 5, 5 + length));
+                                            mBind.etCondition2MinSampleInterval.setText(String.valueOf(interval));
+                                        }
+                                        break;
+                                    case KEY_CONDITION_2_SAMPLE_TIMES:
+                                        if (length > 0) {
+                                            int times = value[5] & 0xFF;
+                                            mBind.etCondition2SampleTimes.setText(String.valueOf(times));
+                                        }
                                         break;
                                 }
                             }
@@ -204,29 +240,45 @@ public class SelfTestActivity extends BaseActivity {
     }
 
     private boolean isValid() {
-        if (TextUtils.isEmpty(mBind.etLowPowerMinSampleInterval.getText())) return false;
-        String intervalNonStr = mBind.etLowPowerMinSampleInterval.getText().toString();
+        if (TextUtils.isEmpty(mBind.etCondition1MinSampleInterval.getText())) return false;
+        String intervalNonStr = mBind.etCondition1MinSampleInterval.getText().toString();
         int intervalNon = Integer.parseInt(intervalNonStr);
         if (intervalNon < 1 || intervalNon > 1440)
             return false;
-        if (TextUtils.isEmpty(mBind.etLowPowerSampleTimes.getText())) return false;
-        String timesNonStr = mBind.etLowPowerSampleTimes.getText().toString();
+        if (TextUtils.isEmpty(mBind.etCondition1SampleTimes.getText())) return false;
+        String timesNonStr = mBind.etCondition1SampleTimes.getText().toString();
         int timesNon = Integer.parseInt(timesNonStr);
         if (timesNon < 1 || timesNon > 100)
+            return false;
+        if (TextUtils.isEmpty(mBind.etCondition2MinSampleInterval.getText())) return false;
+        String intervalNon2Str = mBind.etCondition2MinSampleInterval.getText().toString();
+        int intervalNon2 = Integer.parseInt(intervalNon2Str);
+        if (intervalNon2 < 1 || intervalNon2 > 1440)
+            return false;
+        if (TextUtils.isEmpty(mBind.etCondition2SampleTimes.getText())) return false;
+        String timesNon2Str = mBind.etCondition2SampleTimes.getText().toString();
+        int timesNon2 = Integer.parseInt(timesNon2Str);
+        if (timesNon2 < 1 || timesNon2 > 100)
             return false;
         return true;
     }
 
     private void saveParams() {
         savedParamsError = false;
-        int thresholdNon = (int) mBind.tvLowPowerVoltageThreshold.getTag() + 44;
-        int intervalNon = Integer.parseInt(mBind.etLowPowerMinSampleInterval.getText().toString());
-        int timesNon = Integer.parseInt(mBind.etLowPowerSampleTimes.getText().toString());
+        int thresholdNon = (int) mBind.tvCondition1VoltageThreshold.getTag() + 44;
+        int intervalNon = Integer.parseInt(mBind.etCondition1MinSampleInterval.getText().toString());
+        int timesNon = Integer.parseInt(mBind.etCondition1SampleTimes.getText().toString());
+        int thresholdNon2 = (int) mBind.tvCondition2VoltageThreshold.getTag() + 44;
+        int intervalNon2 = Integer.parseInt(mBind.etCondition2MinSampleInterval.getText().toString());
+        int timesNon2 = Integer.parseInt(mBind.etCondition2SampleTimes.getText().toString());
 
         List<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setLowPowerVoltageThreshold(thresholdNon));
-        orderTasks.add(OrderTaskAssembler.setLowPowerMinSampleInterval(intervalNon));
-        orderTasks.add(OrderTaskAssembler.setLowPowerSampleTimes(timesNon));
+        orderTasks.add(OrderTaskAssembler.setCondition1VoltageThreshold(thresholdNon));
+        orderTasks.add(OrderTaskAssembler.setCondition1MinSampleInterval(intervalNon));
+        orderTasks.add(OrderTaskAssembler.setCondition1SampleTimes(timesNon));
+        orderTasks.add(OrderTaskAssembler.setCondition2VoltageThreshold(thresholdNon2));
+        orderTasks.add(OrderTaskAssembler.setCondition2MinSampleInterval(intervalNon2));
+        orderTasks.add(OrderTaskAssembler.setCondition2SampleTimes(timesNon2));
         LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 

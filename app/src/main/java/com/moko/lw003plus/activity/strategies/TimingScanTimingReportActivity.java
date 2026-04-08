@@ -281,9 +281,7 @@ public class TimingScanTimingReportActivity extends BaseActivity implements Base
                                         break;
                                     case KEY_TIMING_SCAN_TIMING_REPORT_PARAMS:
                                     case KEY_TIMING_SCAN_TIMING_REPORT_SCAN_TIME_POINT:
-                                        if (result != 1) {
-                                            savedParamsError = true;
-                                        }
+                                        savedParamsError |= result != 1;
                                         break;
                                     case KEY_TIMING_SCAN_TIMING_REPORT_REPORT_TIME_POINT:
                                         savedParamsError |= result != 1;

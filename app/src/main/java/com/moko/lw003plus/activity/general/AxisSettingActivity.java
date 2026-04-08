@@ -1,4 +1,4 @@
-package com.moko.lw003plus.activity.lora;
+package com.moko.lw003plus.activity.general;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -17,7 +17,7 @@ import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
-import com.moko.lw003plus.databinding.Lw003PlusActivityAppSettingBinding;
+import com.moko.lw003plus.databinding.Lw003PlusActivityAxisSettingBinding;
 import com.moko.lw003plus.utils.ToastUtils;
 import com.moko.support.lw003plus.LoRaLW003PlusMokoSupport;
 import com.moko.support.lw003plus.OrderTaskAssembler;
@@ -32,18 +32,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoRaAppSettingActivity extends BaseActivity {
+public class AxisSettingActivity extends BaseActivity {
 
-    private Lw003PlusActivityAppSettingBinding mBind;
-
+    private Lw003PlusActivityAxisSettingBinding mBind;
     private boolean mReceiverTag = false;
     private boolean savedParamsError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBind = Lw003PlusActivityAppSettingBinding.inflate(getLayoutInflater());
+        mBind = Lw003PlusActivityAxisSettingBinding.inflate(getLayoutInflater());
         setContentView(mBind.getRoot());
+
         EventBus.getDefault().register(this);
         // 注册广播接收器
         IntentFilter filter = new IntentFilter();
@@ -51,10 +51,10 @@ public class LoRaAppSettingActivity extends BaseActivity {
         registerReceiver(mReceiver, filter);
         mReceiverTag = true;
         showSyncingProgressDialog();
-        mBind.etSyncInterval.postDelayed(() -> {
-            List<OrderTask> orderTasks = new ArrayList<>();
-            orderTasks.add(OrderTaskAssembler.getLoraTimeSyncInterval());
-            orderTasks.add(OrderTaskAssembler.getLoraNetworkCheckInterval());
+        mBind.etWakeupDuration.postDelayed(() -> {
+            ArrayList<OrderTask> orderTasks = new ArrayList<>();
+            orderTasks.add(OrderTaskAssembler.getAccWakeupCondition());
+            orderTasks.add(OrderTaskAssembler.getAccMotionCondition());
             LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
@@ -102,13 +102,13 @@ public class LoRaAppSettingActivity extends BaseActivity {
                                 // write
                                 int result = value[5] & 0xFF;
                                 switch (configKeyEnum) {
-                                    case KEY_LORA_TIME_SYNC_INTERVAL:
+                                    case KEY_ACC_WAKEUP_CONDITION:
                                         savedParamsError |= result != 1;
                                         break;
-                                    case KEY_LORA_NETWORK_CHECK_INTERVAL:
+                                    case KEY_ACC_MOTION_CONDITION:
                                         savedParamsError |= result != 1;
                                         if (savedParamsError) {
-                                            ToastUtils.showToast(LoRaAppSettingActivity.this, "Opps！Save failed. Please check the input characters and try again.");
+                                            ToastUtils.showToast(AxisSettingActivity.this, "Opps！Save failed. Please check the input characters and try again.");
                                         } else {
                                             ToastUtils.showToast(this, "Save Successfully！");
                                         }
@@ -118,18 +118,24 @@ public class LoRaAppSettingActivity extends BaseActivity {
                             if (flag == 0x00) {
                                 // read
                                 switch (configKeyEnum) {
-                                    case KEY_LORA_TIME_SYNC_INTERVAL:
-                                        if (length > 0) {
-                                            int interval = value[5] & 0xFF;
-                                            mBind.etSyncInterval.setText(String.valueOf(interval));
+                                    case KEY_ACC_WAKEUP_CONDITION:
+                                        if (length == 2) {
+                                            int threshold = value[5] & 0xFF;
+                                            int duration = value[6] & 0xFF;
+                                            mBind.etWakeupThreshold.setText(String.valueOf(threshold));
+                                            mBind.etWakeupDuration.setText(String.valueOf(duration));
+
                                         }
                                         break;
-                                    case KEY_LORA_NETWORK_CHECK_INTERVAL:
-                                        if (length > 0) {
-                                            int interval = value[5] & 0xFF;
-                                            mBind.etNetworkCheckInterval.setText(String.valueOf(interval));
+                                    case KEY_ACC_MOTION_CONDITION:
+                                        if (length == 2) {
+                                            int threshold = value[5] & 0xFF;
+                                            int duration = value[6] & 0xFF;
+                                            mBind.etMotionThreshold.setText(String.valueOf(threshold));
+                                            mBind.etMotionDuration.setText(String.valueOf(duration));
                                         }
                                         break;
+
                                 }
                             }
                         }
@@ -137,59 +143,6 @@ public class LoRaAppSettingActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-    public void onSave(View view) {
-        if (isWindowLocked())
-            return;
-        if (isValid()) {
-            showSyncingProgressDialog();
-            saveParams();
-        } else {
-            ToastUtils.showToast(this, "Para error!");
-        }
-    }
-
-    public void onMulticastGroup(View view) {
-        if (isWindowLocked()) return;
-        startActivity(new Intent(this, MulticastGroupActivity.class));
-    }
-
-    public void onMessageTypeSettings(View view) {
-        if (isWindowLocked()) return;
-        startActivity(new Intent(this, MessageTypeActivity.class));
-    }
-
-    private boolean isValid() {
-        final String syncIntervalStr = mBind.etSyncInterval.getText().toString();
-        if (TextUtils.isEmpty(syncIntervalStr))
-            return false;
-        final int syncInterval = Integer.parseInt(syncIntervalStr);
-        if (syncInterval > 255) {
-            return false;
-        }
-        final String networkCheckIntervalStr = mBind.etNetworkCheckInterval.getText().toString();
-        if (TextUtils.isEmpty(networkCheckIntervalStr))
-            return false;
-        final int networkCheckInterval = Integer.parseInt(networkCheckIntervalStr);
-        if (networkCheckInterval > 255) {
-            return false;
-        }
-        return true;
-
-    }
-
-
-    private void saveParams() {
-        final String syncIntervalStr = mBind.etSyncInterval.getText().toString();
-        final String networkCheckIntervalStr = mBind.etNetworkCheckInterval.getText().toString();
-        final int syncInterval = Integer.parseInt(syncIntervalStr);
-        final int networkCheckInterval = Integer.parseInt(networkCheckIntervalStr);
-        savedParamsError = false;
-        List<OrderTask> orderTasks = new ArrayList<>();
-        orderTasks.add(OrderTaskAssembler.setLoraTimeSyncInterval(syncInterval));
-        orderTasks.add(OrderTaskAssembler.setLoraNetworkInterval(networkCheckInterval));
-        LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 
 
@@ -235,6 +188,63 @@ public class LoRaAppSettingActivity extends BaseActivity {
     }
 
     private void backHome() {
+        setResult(RESULT_OK);
         finish();
+    }
+
+    public void onSave(View view) {
+        if (isWindowLocked())
+            return;
+        if (isValid()) {
+            showSyncingProgressDialog();
+            saveParams();
+        } else {
+            ToastUtils.showToast(this, "Para error!");
+        }
+    }
+
+    private boolean isValid() {
+        final String wakeUpThresholdStr = mBind.etWakeupThreshold.getText().toString();
+        if (TextUtils.isEmpty(wakeUpThresholdStr))
+            return false;
+        final int wakeUpThreshold = Integer.parseInt(wakeUpThresholdStr);
+        if (wakeUpThreshold < 1 || wakeUpThreshold > 20)
+            return false;
+        final String wakeUpDurationStr = mBind.etWakeupDuration.getText().toString();
+        if (TextUtils.isEmpty(wakeUpDurationStr))
+            return false;
+        final int wakeUpDuration = Integer.parseInt(wakeUpDurationStr);
+        if (wakeUpDuration < 1 || wakeUpDuration > 10)
+            return false;
+        final String motionThresholdStr = mBind.etMotionThreshold.getText().toString();
+        if (TextUtils.isEmpty(motionThresholdStr))
+            return false;
+        final int motionThreshold = Integer.parseInt(motionThresholdStr);
+        if (motionThreshold < 10 || motionThreshold > 250)
+            return false;
+        final String motionDurationStr = mBind.etMotionDuration.getText().toString();
+        if (TextUtils.isEmpty(motionDurationStr))
+            return false;
+        final int motionDuration = Integer.parseInt(motionDurationStr);
+        if (motionDuration < 1 || motionDuration > 50)
+            return false;
+        return true;
+
+    }
+
+    private void saveParams() {
+        final String wakeUpThresholdStr = mBind.etWakeupThreshold.getText().toString();
+        final int wakeUpThreshold = Integer.parseInt(wakeUpThresholdStr);
+        final String wakeUpDurationStr = mBind.etWakeupDuration.getText().toString();
+        final int wakeUpDuration = Integer.parseInt(wakeUpDurationStr);
+        final String motionThresholdStr = mBind.etMotionThreshold.getText().toString();
+        final int motionThreshold = Integer.parseInt(motionThresholdStr);
+        final String motionDurationStr = mBind.etMotionDuration.getText().toString();
+        final int motionDuration = Integer.parseInt(motionDurationStr);
+        savedParamsError = false;
+        List<OrderTask> orderTasks = new ArrayList<>();
+        orderTasks.add(OrderTaskAssembler.setAccWakeupCondition(wakeUpThreshold, wakeUpDuration));
+        orderTasks.add(OrderTaskAssembler.setAccMotionCondition(motionThreshold, motionDuration));
+        LoRaLW003PlusMokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 }
