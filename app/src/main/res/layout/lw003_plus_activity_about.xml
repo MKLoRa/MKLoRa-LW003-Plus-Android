@@ -60,7 +60,7 @@
         android:layout_below="@id/iv_logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:text="LW003-B PLUS"
+        android:text="LW003 PLUS"
         android:textColor="@color/grey_888888"
         android:textSize="20sp" />
 

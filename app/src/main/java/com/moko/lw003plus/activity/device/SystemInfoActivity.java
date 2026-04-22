@@ -283,7 +283,7 @@ public class SystemInfoActivity extends BaseActivity {
                 if (file != null) {
                     // 发送邮件
                     String address = "Development@mokotechnology.com";
-                    String title = "LW003-B_Pro Decoder";
+                    String title = "LW003_Plus Decoder";
                     String content = title;
                     Utils.sendEmail(this, address, content, title, "Choose Email Client", file);
                 }

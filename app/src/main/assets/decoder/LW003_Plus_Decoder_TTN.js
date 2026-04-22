@@ -7,22 +7,18 @@ var BXPDeviceInfoFlag = 0x1FFF;
 var BXPACCFlag = 0x1FFF;
 var BXPTHFlag = 0x07FF;
 var BXPButtonFlag = 0x03FFFF;
-var BXPTagFlag = 0x0FFF;
+var BXPTagFlag = 0x3FFF;
 var OtherTypeFlag = 0x1F;
 var BXPPirFlag = 0x3FFF;
 var BXPTofFlag = 0x0FFF;
+var nanoBeaconFlag = 0x03FF;
 
 
-var chargingTypeArray = [
-'No Charging',
-'DC Priority',
-'Solar Priority'
-];
-
+var infoPackageArray = ['Trigger by downlink','Trip on start','In trip','Trip on end'];
 var shutDownTypeArray = ["Bluetooth command or App", "LoRaWAN Command", "Power button", "Battery run out"];
 var beaconTypeArray =
 [
-"Unknown",
+"Other",
 "iBeacon",
 "Eddystone-UID",
 "Eddystone-URL",
@@ -36,12 +32,38 @@ var beaconTypeArray =
 "BXP-TOF",
 "BXP-iBeacon",
 ];
-var messageTypeArray = ["Normal heartbeat report", "The device come into low power state", "Other type"];
+//var messageTypeArray = ["Normal heartbeat report", "The device come into low power state", "Other type"];
 var sampleRateArray = ["1Hz", "10Hz", "25Hz", "50Hz", "100Hz", "200Hz", "400Hz", "1344Hz", "1620Hz", "5376Hz"];
 var fullScaleArray = ["±2g", "±4g", "±8g", "±16g"];
 var frameTypeArray = ["Single press mode", "Double press mode", "Long press mode", "Abnormal inactivity mode"];
 var urlSchemeArray = ["http://www.", "https://www.", "http://", "https://"];
 var urlExpansionArray = [".com/", ".org/", ".edu/", ".net/", ".info/", ".biz/", ".gov/", ".com", ".org", ".edu", ".net", ".info", ".biz", ".gov"];
+var disconnectTypeArray = ["Abnormal", "Timeout", "Active"];
+var beaconConnectResultArray = [
+"Success",
+"Scan closed",
+"Exceed the max number",
+"Beacon has been connected",
+"Out of range",
+"Cannot be connected",
+"Connect failed",
+"Device type error",
+"Password error"
+];
+var getBXPBDDeviceInfoResultArray = ["Success","Device disconnect","Not support command"];
+var cmdResultArray = ["Success","Device disconnect","Not support command","Timeout"];
+var deleteTriggerResultArray = ["Single click","Double click","Long press"];
+var positionModeArray = [
+'Standby mode','Periodic mode',
+'Timing mode','Stationary of motion mode',
+'Trip start of motion mode','In trip of motion mode',
+'Trip end of motion mode'
+];
+var positionFailedArray = [
+'GPS positioning timeout','GPS tech timeout',
+'PDOP limit','Interrupted by trip end',
+'Interrupted by trip start'
+];
 
 function decodeUplink(input) {
 var bytes = input.bytes;
@@ -60,9 +82,16 @@ var index = 0;
 if (fPort == 1 || fPort == 3 || fPort == 4 || fPort == 8) {
 const battery_status = bytes[index];
 index++;
-data.battery_charging_status = (battery_status & 0x80 == 0x80) ? "in charging" : "no charging";
-data.battery_level = (battery_status & 0x7F) + "%";
 
+var battery_level = (battery_status & 0x7F);
+if (battery_level != 0x7F) {
+data.battery_charging_status = ((battery_status & 0x80) == 0x80) ? "Charging" : "No Charge";
+}
+if (battery_level > 100) {
+battery_level = 100;
+}
+
+data.battery_level = battery_level + "%";
 data.battery_voltage = bytesToInt(bytes, index, 2) + 'mV';
 index += 2;
 
@@ -94,34 +123,79 @@ index += 2;
 data.timezone = signedHexToInt(bytesToHexString(bytes, index, 1)) / 2;
 index += 1;
 
-data.charging_type = chargingTypeArray[bytes[index]];
+if (fPort == 4) {
+data.information_package_type = infoPackageArray[bytes[index]];
+}
+
 } else if (fPort == 2) {
 const battery_status = bytes[index];
 index++;
-data.battery_charging_status = (battery_status & 0x80 == 0x80) ? "in charging" : "no charging";
+data.battery_charging_status = ((battery_status & 0x80) == 0x80) ? "Charging" : "No Charge";
 data.battery_level = (battery_status & 0x7F) + "%";
 
 data.battery_voltage = bytesToInt(bytes, index, 2) + 'mV';
 index += 2;
 
 const date = new Date(1000 * bytesToInt(bytes, index, 4));
-data.time = date.toLocaleString();
+data.timestamp = date.toLocaleString();
 index += 4;
 
-data.timezone = signedHexToInt(bytesToHexString(bytes, index, 1) / 2);
+data.timezone = signedHexToInt(bytesToHexString(bytes, index, 1))/ 2;
 index += 1;
 
 data.shutdown_type = shutDownTypeArray[bytes[index]];
 index += 1;
 
-data.charging_type = chargingTypeArray[bytes[index]];
-} else if (fPort == 5) {
+} else if (fPort == 9) {
+const battery_status = bytes[index];
+index++;
+data.battery_charging_status = ((battery_status & 0x80) == 0x80) ? "Charging" : "No Charge";
+data.battery_level = (battery_status & 0x7F) + "%";
+
+data.work_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.adv_cnt = bytesToInt(bytes, index, 4);
+index += 4;
+
+data.scan_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.axis_sleep_total_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.axis_wakeup_total_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.power_light_total_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.ble_light_total_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.lorawan_light_total_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.gps_light_total_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.wifi_light_total_time = bytesToInt(bytes, index, 4) + 's';
+index += 4;
+
+data.lorawan_send_count = bytesToInt(bytes, index, 4);
+index += 4;
+
+data.lorawan_power = bytesToInt(bytes, index, 4) + 'mAS';
+index += 4;
+
+data.power_consumption = bytesToInt(bytes, index, 4) / 1000 + 'mAH';
+
+} else if (fPort == 5 || fPort == 10) {
 // Scan data info
 data.packet_sequence = bytes[index];
 index += 1;
 
-data.time = parse_time(bytesToInt(bytes, index, 4), bytes[5] * 0.5);
-data.timestamp = bytesToInt(bytes, index, 4);
+data.timestamp = parse_time(bytesToInt(bytes, index, 4), bytes[5] * 0.5);
 index += 4;
 
 data.timezone = timezone_decode(bytes[index]);
@@ -129,7 +203,7 @@ index += 1;
 
 data.beacon_number = bytes[index];
 index += 1;
-data.message_type = "Scan data";
+data.message_type = "Scan Data";
 
 // var date = new Date();
 // data.time = date.toJSON();
@@ -158,9 +232,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -173,8 +245,16 @@ while (blockNum > 0) {
 var dataBlock = {};
 var dataBlockLength = bytes[parse_len++];
 beacon_len++;
+if ((dataBlockLength >> 6) & 0x00) {
+dataBlock.status = "Normal";
+parse_len++;
+beacon_len++;
+dataBlocks.push(dataBlock);
+blockNum--;
+continue;
+}
 if ((dataBlockLength >> 6) & 0x01) {
-dataBlock.error = "type error";
+dataBlock.status = "Type Error";
 parse_len++;
 beacon_len++;
 dataBlocks.push(dataBlock);
@@ -182,7 +262,7 @@ blockNum--;
 continue;
 }
 if ((dataBlockLength >> 6) & 0x02) {
-dataBlock.error = "length error";
+dataBlock.status = "Length Error";
 parse_len++;
 beacon_len++;
 dataBlocks.push(dataBlock);
@@ -222,9 +302,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -278,9 +356,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -319,9 +395,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -365,9 +439,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -378,7 +450,6 @@ beacon_len++;
 }
 if (flag & 0x10) {
 item.battery_voltage = bytesToInt(bytes, parse_len, 2) + "mV";
-item.batt_vol = bytesToInt(bytes, parse_len, 2);
 parse_len += 2;
 beacon_len += 2;
 }
@@ -389,7 +460,7 @@ var tempDecimal = bytes[parse_len++];
 beacon_len++;
 tempInt = tempInt > 128 ? tempInt - 256 : tempInt;
 tempDecimal = tempDecimal / 256;
-var temperature = (tempInt + tempDecimal).toFixed(1);
+var temperature = (tempInt + tempDecimal).toFixed(1) + '℃';
 item.temperature = temperature;
 }
 if (flag & 0x40) {
@@ -421,9 +492,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -444,7 +513,7 @@ beacon_len++;
 }
 if (flag & 0x40) {
 item.battery_voltage = bytesToInt(bytes, parse_len, 2) + "mV";
-item.batt_vol = bytesToInt(bytes, parse_len, 2);
+//item.batt_vol = bytesToInt(bytes, parse_len, 2);
 parse_len += 2;
 beacon_len += 2;
 }
@@ -454,7 +523,9 @@ item.sample_rate = sampleRateArray[bytes[parse_len++]];
 beacon_len++;
 }
 if (flag & 0x0100) {
-item.full_scale = fullScaleArray[bytes[parse_len++]];
+item.full_scale_index = bytes[parse_len];
+item.full_scale = fullScaleArray[bytes[parse_len]];
+parse_len++;
 beacon_len++;
 }
 if (flag & 0x0200) {
@@ -462,19 +533,32 @@ item.motion_threshold = bytes[parse_len++] / 10 + "g";
 beacon_len++;
 }
 if (flag & 0x0400) {
-var x_axis = bytesToHexString(bytes, parse_len, 2);
+var scaleIndex = item.full_scale_index ?? 0;
+
+var scale = 0.9765625;
+if (scaleIndex == 1) {
+scale = 1.953125;
+}else if (scaleIndex == 2) {
+scale = 3.90625;
+}else if (scaleIndex == 3) {
+scale = 7.8125;
+}
+
+item.x_axis_data = fetchRawString(bytesToInt(bytes,parse_len,2),scale);
 parse_len += 2;
 beacon_len += 2;
-var y_axis = bytesToHexString(bytes, parse_len, 2);
+item.y_axis_data = fetchRawString(bytesToInt(bytes,parse_len,2),scale);
 parse_len += 2;
 beacon_len += 2;
-var z_axis = bytesToHexString(bytes, parse_len, 2);
+item.z_axis_data = fetchRawString(bytesToInt(bytes,parse_len,2),scale);
 parse_len += 2;
 beacon_len += 2;
-item.axis_data = "X:0x" + x_axis + " Y:0x" + y_axis + " Z:0x" + z_axis;
-item.x_axis_data = signedHexToInt(x_axis);
-item.y_axis_data = signedHexToInt(y_axis);
-item.z_axis_data = signedHexToInt(z_axis);
+
+var x_axis = '0x' + item.x_axis_data.toString(16).toUpperCase();
+var y_axis = '0x' + item.y_axis_data.toString(16).toUpperCase();
+var z_axis = '0x' + item.z_axis_data.toString(16).toUpperCase();
+item.axis_data = "X:" + x_axis + " Y:" + y_axis + " Z:" + z_axis;
+
 }
 if ((flag & 0x1800)) {
 item.raw_data_length = current_data_len - beacon_len;
@@ -495,9 +579,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -518,7 +600,6 @@ beacon_len++;
 }
 if (flag & 0x40) {
 item.battery_voltage = bytesToInt(bytes, parse_len, 2) + "mV";
-item.batt_vol = bytesToInt(bytes, parse_len, 2);
 parse_len += 2;
 beacon_len += 2;
 }
@@ -526,14 +607,14 @@ beacon_len += 2;
 if (flag & 0x80) {
 var temperature = bytesToInt(bytes, parse_len, 2);
 if (temperature > 0x8000)
-item.temperature = "-" + (0x10000 - temperature) / 10;
+item.temperature = "-" + (0x10000 - temperature) / 10 + '℃';
 else
-item.temperature = temperature / 10;
+item.temperature = temperature / 10 + '℃';
 parse_len += 2;
 beacon_len += 2;
 }
 if (flag & 0x0100) {
-item.humidity = bytesToInt(bytes, parse_len, 2) / 10;
+item.humidity = bytesToInt(bytes, parse_len, 2) / 10 + '%';
 parse_len += 2;
 beacon_len += 2;
 }
@@ -556,18 +637,16 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
 // ================
 if (flag & 0x08) {
 item.hall_sensor_status = bytes[parse_len] & 0x01 ? "Magnet away/absent" : "Magnet approach/present";
-item.hall_sensor_status_code = bytes[parse_len] & 0x01;
+//item.hall_sensor_status_code = bytes[parse_len] & 0x01;
 item.accelerometer_sensor_status = bytes[parse_len] & 0x02 ? "In move" : "In static";
-item.accelerometer_check_move = bytes[parse_len] & 0x02;
+//item.accelerometer_check_move = bytes[parse_len] & 0x02;
 item.accelerometer_sensor_equipped_status = bytes[parse_len] & 0x04 ? "Equipped" : "Not equipped";
 parse_len++;
 beacon_len++;
@@ -592,18 +671,18 @@ beacon_len += 2;
 var z_axis = bytesToHexString(bytes, parse_len, 2);
 parse_len += 2;
 beacon_len += 2;
-item.axis_data = "X:0x" + x_axis + " Y:0x" + y_axis + " Z:0x" + z_axis;
+//item.axis_data = "X:0x" + x_axis + " Y:0x" + y_axis + " Z:0x" + z_axis;
 item.x_axis_data = signedHexToInt(x_axis);
 item.y_axis_data = signedHexToInt(y_axis);
 item.z_axis_data = signedHexToInt(z_axis);
 }
 if (flag & 0x80) {
-item.temperature = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 2)) * 0.1).toFixed(1);
+item.temperature = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 2)) * 0.1).toFixed(1) + '℃';
 parse_len += 2;
 beacon_len += 2;
 }
 if (flag & 0x0100) {
-item.humidity = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 2)) * 0.1).toFixed(1);
+item.humidity = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 2)) * 0.1).toFixed(1) + '%';
 parse_len += 2;
 beacon_len += 2;
 }
@@ -647,9 +726,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -670,7 +747,7 @@ beacon_len++;
 }
 if (flag & 0x40) {
 item.battery_voltage = bytesToInt(bytes, parse_len, 2) + "mV";
-item.batt_vol = bytesToInt(bytes, parse_len, 2);
+
 parse_len += 2;
 beacon_len += 2;
 }
@@ -722,9 +799,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -737,7 +812,7 @@ beacon_len++;
 if (flag & 0x10) {
 item.password_verification_status = (bytes[parse_len] & 0x01) ? "Password verification enabled" : "Password verification disabled";
 item.alarm_triggered_status = (bytes[parse_len] & 0x02) ? "Alarm be triggered" : "Alarm not be triggered";
-item.alarm_status = bytes[parse_len] & 0x02;
+//item.alarm_status = bytes[parse_len] & 0x02;
 parse_len++;
 beacon_len++;
 }
@@ -784,13 +859,13 @@ beacon_len += 2;
 var z_axis = bytesToHexString(bytes, parse_len, 2);
 parse_len += 2;
 beacon_len += 2;
-item.axis_data = "X:0x" + x_axis + " Y:0x" + y_axis + " Z:0x" + z_axis;
+//item.axis_data = "X:0x" + x_axis + " Y:0x" + y_axis + " Z:0x" + z_axis;
 item.x_axis_data = signedHexToInt(x_axis);
 item.y_axis_data = signedHexToInt(y_axis);
 item.z_axis_data = signedHexToInt(z_axis);
 }
 if (flag & 0x1000) {
-item.temperature = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 2)) * 0.1).toFixed(1);
+item.temperature = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 2)) * 0.1).toFixed(1) + '℃';
 parse_len += 2;
 beacon_len += 2;
 }
@@ -801,7 +876,6 @@ beacon_len++;
 }
 if (flag & 0x4000) {
 item.battery_voltage = bytesToInt(bytes, parse_len, 2) + "mV";
-item.batt_vol = bytesToInt(bytes, parse_len, 2);
 parse_len += 2;
 beacon_len += 2;
 }
@@ -830,9 +904,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4),0);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -893,7 +965,7 @@ parse_len += item.raw_data_length;
 datas.push(item);
 } else if (beacon_type == 11) {
 // BXPTofFlag
-var flag = BXPPirFlag;
+var flag = BXPTofFlag;
 if (flag & 0x01) {
 item.mac = bytesToHexString(bytes, parse_len, 6).toLowerCase();
 parse_len += 6;
@@ -904,22 +976,20 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
 
 if (flag & 0x08) {
-item.mfg_code = '0x' + bytesToHexString(bytes, parse_len, 1);
-parse_len++;
-beacon_len++;
+item.mfg_code = '0x' + bytesToHexString(bytes, parse_len, 2);
+parse_len +=2;
+beacon_len +=2;
 }
 if (flag & 0x10) {
-item.beacon_code = '0x' + bytesToHexString(bytes, parse_len, 1);
-parse_len++;
-beacon_len++;
+item.beacon_code = '0x' + bytesToHexString(bytes, parse_len, 2);
+parse_len +=2;
+beacon_len +=2;
 }
 if (flag & 0x20) {
 item.battery_voltage = bytesToInt(bytes, parse_len, 2) + 'mV';
@@ -927,14 +997,14 @@ parse_len += 2;
 beacon_len += 2;
 }
 if (flag & 0x40) {
-var rangingData = bytes[parse_len++];
-item.ranging_data = rangingData == 0 ? "0dBm" : rangingData - 256 + "dBm";
-beacon_len++;
+item.ranging_data = bytesToInt(bytes, parse_len, 2) + 'mm';
+parse_len += 2;
+beacon_len += 2;
 }
 if (flag & 0x80) {
-item.user_data = '0x' + bytesToHexString(bytes, parse_len, 1);
-parse_len++;
-beacon_len++;
+item.user_data = '0x' + bytesToHexString(bytes, parse_len, 2);
+parse_len +=2;
+beacon_len +=2;
 }
 if (flag & 0x0100) {
 item.sub_type = '0x' + bytesToHexString(bytes, parse_len, 1);
@@ -969,9 +1039,7 @@ item.rssi = bytes[parse_len++] - 256;
 beacon_len += 1;
 }
 if (flag & 0x04) {
-item.current_time = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
-item.timestamp = bytesToInt(bytes, parse_len, 4);
-item.timezone = parse_time_zone(bytes[5] * 0.5);
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
 parse_len += 4;
 beacon_len += 4;
 }
@@ -1023,9 +1091,187 @@ item.raw_data = bytesToHexString(bytes, parse_len, item.raw_data_length).toUpper
 parse_len += item.raw_data_length;
 }
 datas.push(item);
+} else if (beacon_type == 13) {
+// nanoBeaconFlag
+var flag = nanoBeaconFlag;
+if (flag & 0x01) {
+item.mac = bytesToHexString(bytes, parse_len, 6).toLowerCase();
+parse_len += 6;
+beacon_len += 6;
+}
+if (flag & 0x02) {
+item.rssi = bytes[parse_len++] - 256;
+beacon_len += 1;
+}
+if (flag & 0x04) {
+item.timestamp = parse_time(bytesToInt(bytes, parse_len, 4), bytes[5] * 0.5);
+parse_len += 4;
+beacon_len += 4;
+}
+// ================
+if (!no_response_package) {
+if (flag & 0x08) {
+item.mfg_code = '0x' + bytesToHexString(bytes, parse_len, 2);
+parse_len +=2;
+beacon_len +=2;
+}
+if (flag & 0x10) {
+item.adv_type_status =  bytesToInt(bytes, parse_len, 1) === 0 ? 'Normal' : 'Trigger';
+parse_len += 1;
+beacon_len += 1;
+}
+if (flag & 0x20) {
+item.battery_voltage = Math.round(bytesToInt(bytes, parse_len, 1) * 31.25) + 'mV';
+parse_len += 1;
+beacon_len += 1;
+}
+if (flag & 0x40) {
+item.temperature = (signedHexToInt(bytesToHexString(bytes, parse_len, 2)) * 0.01) + '°C';;
+
+parse_len += 2;
+beacon_len += 2;
+}
+if (flag & 0x80) {
+item.sec_cnt = bytesToInt(bytes, parse_len, 4);
+
+parse_len += 4;
+beacon_len += 4;
+}
+if (flag & 0x0100) {
+const status = bytesToHexString(bytes,parse_len,1);
+var status_string = '';
+if (status == 'dd') {
+status_string = 'No Alarm';
+} else if (status == 'fd') {
+status_string = 'Cut-off Alarm';
+} else if (status == 'cd') {
+status_string = 'Button Alarm';
+} else if (status == 'ed') {
+status_string = 'Button alarm and Cut-off alarm';
+}
+item.trigger_status = status_string;
+
+parse_len += 1;
+beacon_len += 1;
+}
+}
+if (flag & 0x0200) {
+item.raw_data_length = current_data_len - beacon_len;
+item.raw_data = bytesToHexString(bytes, parse_len, item.raw_data_length).toUpperCase();
+parse_len += item.raw_data_length;
+}
+datas.push(item);
 }
 }
 data.scan_data = datas;
+var gps_data_len = bytesToInt(bytes,parse_len,1);
+parse_len ++;
+if (gps_data_len == 5) {
+//定位失败
+var temp_data = {};
+temp_data.pdop = bytesToInt(bytes, parse_len, 1);
+parse_len ++;
+temp_data.satellite_signal_strength_one = bytesToInt(bytes, parse_len, 1);
+parse_len ++;
+temp_data.satellite_signal_strength_two = bytesToInt(bytes, parse_len, 1);
+parse_len ++;
+temp_data.satellite_signal_strength_three = bytesToInt(bytes, parse_len, 1);
+parse_len ++;
+temp_data.satellite_signal_strength_four = bytesToInt(bytes, parse_len, 1);
+parse_len ++;
+
+data.position_failure_data = temp_data;
+} else if (gps_data_len == 9) {
+//定位成功
+var temp_data = {};
+var latitude = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 4)) * 0.0000001).toFixed(7);
+parse_len += 4;
+var longitude = Number(signedHexToInt(bytesToHexString(bytes, parse_len, 4)) * 0.0000001).toFixed(7);
+parse_len += 4;
+var pdop = Number(bytesToInt(bytes, parse_len, 1) * 0.1).toFixed(1);
+parse_len ++;
+temp_data.latitude = latitude;
+temp_data.longitude = longitude;
+temp_data.pdop = pdop;
+
+data.position_data = temp_data;
+}
+} else if (fPort == 11) {
+const battery_status = bytes[index];
+index++;
+data.battery_charging_status = ((battery_status & 0x80) == 0x80) ? "Charging" : "No Charge";
+data.battery_level = (battery_status & 0x7F) + "%";
+
+data.battery_voltage = bytesToInt(bytes, index, 2) + 'mV';
+index += 2;
+
+data.position_mode = positionModeArray[bytes[index]];
+index ++;
+
+const date = new Date(1000 * bytesToInt(bytes, index, 4));
+data.timestamp = date.toLocaleString();
+index += 4;
+
+index ++;
+
+var latitude = Number(signedHexToInt(bytesToHexString(bytes, index, 4)) * 0.0000001).toFixed(7);
+index += 4;
+var longitude = Number(signedHexToInt(bytesToHexString(bytes, index, 4)) * 0.0000001).toFixed(7);
+index += 4;
+var pdop = Number(bytesToInt(bytes, index, 1) * 0.1).toFixed(1);
+data.latitude = latitude;
+data.longitude = longitude;
+data.pdop = pdop;
+} else if (fPort == 12) {
+const battery_status = bytes[index];
+index++;
+data.battery_charging_status = ((battery_status & 0x80) == 0x80) ? "Charging" : "No Charge";
+data.battery_level = (battery_status & 0x7F) + "%";
+
+data.battery_voltage = bytesToInt(bytes, index, 2) + 'mV';
+index += 2;
+
+data.position_mode = positionModeArray[bytes[index]];
+index ++;
+
+data.fix_failure_reason = positionFailedArray[bytes[index]];
+index ++;
+
+var postion_len = bytes[index];
+index ++;
+
+var fix_failure_array = [];
+for (var i = 0; i < (postion_len / 5);i ++) {
+var temp_hex = bytes.slice(index + i * 5, index + (i + 1) * 5);
+var temp_data = {};
+temp_data.pdop = bytesToInt(temp_hex, 0, 1);
+temp_data.satellite_signal_strength_one = bytesToInt(temp_hex, 1, 1);
+temp_data.satellite_signal_strength_two = bytesToInt(temp_hex, 2, 1);
+temp_data.satellite_signal_strength_three = bytesToInt(temp_hex, 3, 1);
+temp_data.satellite_signal_strength_four = bytesToInt(temp_hex, 4, 1);
+fix_failure_array.push(temp_data);
+} 
+data.fix_data = fix_failure_array;
+} else if (fPort == 13) {
+const battery_status = bytes[index];
+index++;
+data.battery_charging_status = ((battery_status & 0x80) == 0x80) ? "Charging" : "No Charge";
+data.battery_level = (battery_status & 0x7F) + "%";
+
+//data.battery_voltage = bytesToInt(bytes, index, 2) + 'mV';
+//index += 2;
+
+data.position_mode = positionModeArray[bytes[index]];
+index ++;
+
+var latitude = Number(signedHexToInt(bytesToHexString(bytes, index, 4)) * 0.0000001).toFixed(7);
+index += 4;
+var longitude = Number(signedHexToInt(bytesToHexString(bytes, index, 4)) * 0.0000001).toFixed(7);
+index += 4;
+var pdop = Number(bytesToInt(bytes, index, 1) * 0.1).toFixed(1);
+data.latitude = latitude;
+data.longitude = longitude;
+data.pdop = pdop;
 }
 dev_info.data = data;
 return dev_info;
@@ -1078,7 +1324,7 @@ var twoStr_unsign = "";
 twoStr = parseInt(twoStr, 2) - 1; // 补码：(负数)反码+1，符号位不变；相对十进制来说也是 +1，但这里是负数，+1就是绝对值数据-1
 twoStr = twoStr.toString(2);
 twoStr_unsign = twoStr.substring(1, bitNum); // 舍弃首位(符号位)
-// 去除首字符，将0转为1，将1转为0 反码
+// 去除首字符，将0转为1，将1转为0   反码
 twoStr_unsign = twoStr_unsign.replace(/0/g, "z");
 twoStr_unsign = twoStr_unsign.replace(/1/g, "0");
 twoStr_unsign = twoStr_unsign.replace(/z/g, "1");
@@ -1154,6 +1400,19 @@ return timestamp * 1000;
 function formatNumber(number) {
 return number < 10 ? "0" + number : number;
 }
+
+function fetchRawString(xHex, scale) {
+let value = 0;
+
+if (xHex & 0x8000) {
+value = ((xHex >> 4) - 0x1000) * scale;
+} else {
+value = (xHex >> 4) * scale;
+}
+
+return Math.round(value);
+}
+
 
 String.prototype.format = function () {
 if (arguments.length == 0)

@@ -23,8 +23,8 @@ public class DecoderModule {
     private static volatile DecoderModule INSTANCE;
     private Context context;
     private static final String FOLDER_NAME = "decoder";
-    private static final String FINAL_DECODER = "LW003-B_Pro_Decoder_TTN.js";
-    private static final String NEW_DECODER = "LW003-B_Pro_Decoder_TTN_NEW.txt";
+    private static final String FINAL_DECODER = "LW003_Plus_Decoder_TTN.js";
+    private static final String NEW_DECODER = "LW003_Plus_Decoder_TTN_NEW.txt";
 
     private DecoderModule(Context context) {
         this.context = context;
@@ -92,7 +92,7 @@ public class DecoderModule {
     }
 
     public String getNewHtmlFilePath() {
-        return LoRaLW003PlusMainActivity.PATH_LOGCAT + File.separator + "html" + File.separator + "LW003-B_Pro_Decoder_Final.html";
+        return LoRaLW003PlusMainActivity.PATH_LOGCAT + File.separator + "html" + File.separator + "LW003_Plus_Decoder_Final.html";
     }
 
     public String getFinalHtmlPath() {
@@ -144,8 +144,10 @@ public class DecoderModule {
                     stringBuilder.append(String.format("var OtherTypeFlag = 0x%s;", String.format("%02X", flag.OtherTypeFlag)));
                 else if (line.contains("var BXPPirFlag"))
                     stringBuilder.append(String.format("var BXPPirFlag = 0x%s;", String.format("%04X", flag.BXPPIRFlag)));
-                else if (line.contains("var BXPTofFlag")) {
+                else if (line.contains("var BXPTofFlag"))
                     stringBuilder.append(String.format("var BXPTofFlag = 0x%s;", String.format("%04X", flag.BXPTOFFlag)));
+                else if (line.contains("var nanoBeaconFlag")) {
+                    stringBuilder.append(String.format("var nanoBeaconFlag = 0x%s;", String.format("%04X", flag.BXPNanoFlag)));
                     isFlagChanged = true;
                 } else
                     stringBuilder.append(line);
