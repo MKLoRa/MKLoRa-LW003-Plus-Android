@@ -96,7 +96,7 @@ public class DecoderModule {
     }
 
     public String getFinalHtmlPath() {
-        return LoRaLW003PlusMainActivity.PATH_LOGCAT + File.separator + "html" + File.separator + "decoder.html";
+        return LoRaLW003PlusMainActivity.PATH_LOGCAT + File.separator + "html" + File.separator + "lw003_plus_decoder.html";
     }
 
     public File createNewDecoder(PayloadFlag flag, String outFilePath, String finalFilePath) {
