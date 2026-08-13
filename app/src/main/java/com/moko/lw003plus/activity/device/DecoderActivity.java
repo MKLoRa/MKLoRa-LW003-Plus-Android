@@ -8,10 +8,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.elvishew.xlog.XLog;
+import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.lw003plus.activity.BaseActivity;
 import com.moko.lw003plus.databinding.Lw003PlusActivityDecoderBinding;
 import com.moko.lw003plus.utils.DecoderModule;
 import com.moko.lw003plus.utils.ToastUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -59,7 +64,6 @@ public class DecoderActivity extends BaseActivity {
         }
         showLoadingProgressDialog();
         String str = mBind.etRawData.getText().toString().replaceAll(" ", "");
-        String rawStr = "\'" + str + "\'";
         int port = Integer.parseInt(mBind.etPort.getText().toString().trim());
         if (null == mWebView) {
             mWebView = new WebView(this);
@@ -75,9 +79,25 @@ public class DecoderActivity extends BaseActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                JSONObject inputObject = new JSONObject();
+                try {
+                    // 将 rawStr 转换为字节数组（根据实际数据格式调整）
+                    // 如果 rawStr 是类似 "01A2B3" 的十六进制字符串
+                    byte[] bytes = MokoUtils.hex2bytes(str);
+                    // 或者如果 rawStr 已经是字节数组的字符串形式，可能需要直接使用
+                    // 这里假设需要转换为 JSONArray
+                    JSONArray bytesArray = new JSONArray();
+                    for (byte b : bytes) {
+                        bytesArray.put(b & 0xFF); // 转为无符号整数
+                    }
+                    inputObject.put("bytes", bytesArray);
+                    inputObject.put("fPort", port);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 //现在很少还有4.4的系统了吧
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    mWebView.evaluateJavascript("javascript:Decoder(" + rawStr + "," + port + ")", value -> {
+                    mWebView.evaluateJavascript("javascript:decodeUplink(" + inputObject.toString() + ")", value -> {
                         String json = value.substring(1, value.length() - 1);
                         String result = json.replaceAll("\\\\", "");
                         XLog.i("333333执行了调用方法" + result);
