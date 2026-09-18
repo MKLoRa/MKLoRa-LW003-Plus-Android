@@ -229,11 +229,6 @@ public class LoRaAppSettingActivity extends BaseActivity {
         backHome();
     }
 
-    @Override
-    public void onBackPressed() {
-        backHome();
-    }
-
     private void backHome() {
         finish();
     }

@@ -232,11 +232,6 @@ public class BatteryConsumeActivity extends BaseActivity {
         backHome();
     }
 
-    @Override
-    public void onBackPressed() {
-        backHome();
-    }
-
     private void backHome() {
         finish();
     }
